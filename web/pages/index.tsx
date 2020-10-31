@@ -1,21 +1,35 @@
 import axios from "axios";
 import { useState } from "react";
 import Layout from "../components/Layout";
+import Link from "next/link";
+
+import { Video } from "../interfaces";
 
 const IndexPage = () => {
-  const [urls, setUrl] = useState<string[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+
   async function onChange(event: any) {
-    console.log(event.target.files[0]);
-    var formData = new FormData();
+    const formData = new FormData();
     formData.append("video", event.target.files[0]);
+
     const res = await axios.post("/api/video", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-    setUrl([...urls, res.data.url]);
+
+    setVideos([...videos, res.data]);
   }
-  const ListUrls = urls.map((url, index) => <li key={index}>{url}</li>);
+  const ListVideos = videos.map((video, index) => (
+    <li key={index}>
+      {" "}
+      <Link href="/videos/[uuid]" as={`/videos/${video.uuid}`}>
+        <a>
+          {video.uuid}: {video.name}
+        </a>
+      </Link>
+    </li>
+  ));
   return (
     <Layout title="Home | Next.js + TypeScript Example">
       <input
@@ -24,7 +38,7 @@ const IndexPage = () => {
         placeholder="paste video url"
         onChange={onChange}
       />
-      <ul>{ListUrls}</ul>
+      <ul>{ListVideos}</ul>
     </Layout>
   );
 };
