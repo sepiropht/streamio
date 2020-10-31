@@ -27,7 +27,9 @@ const StaticPropsDetail = ({ item, src, errors }: Props) => {
         item ? item.name : "User Detail"
       } | Next.js + TypeScript Example`}
     >
-      <video src={src}></video>
+      <video controls>
+        <source src={src} type="video/mp4" />
+      </video>
     </Layout>
   );
 };
@@ -36,33 +38,12 @@ export default StaticPropsDetail;
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
-    const AWS = require("aws-sdk");
-    const s3 = new AWS.S3();
-    const fs = require("fs");
-    AWS.config.update({
-      accessKeyId: "AKIAXBZO77ZFN2CUMQ6T",
-      secretAccessKey: "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",
-    });
-
-    AWS.config.update({ region: "eu-west-3" });
-
     // Create S3 service object
     const uuid = params?.uuid;
+    // TODO get real name from mongoDB
     const items = { uuid, name: "saturations" };
-    const Key = uuid + ".mkv";
-    console.log({ Key });
-
-    const data = await s3.getObject({ Bucket: "streamio/Test", Key }).promise();
-
-    console.log(
-      "downlaod success",
-      //Object.keys(data).map((key) => key),
-      data.Body
-    );
-    fs.writeFileSync(Key, data.Body);
-    // do something with data.Body
-    console.log("return");
-    return { props: { items, src: Key } };
+    const src = `/api/fetchVideo?uuid=${uuid}`;
+    return { props: { items, src } };
   } catch (err) {
     return { props: { errors: err.message } };
   }
