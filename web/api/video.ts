@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import multiparty from "multiparty";
 import AWS from "aws-sdk";
 import fs from "fs";
+import mongoose from "mongoose";
+import Video from "./models";
+import path from "path";
+
 // Set the region
 AWS.config.update({
   accessKeyId: "AKIAXBZO77ZFN2CUMQ6T",
@@ -12,26 +16,37 @@ AWS.config.update({ region: "eu-west-3" });
 
 // Create S3 service object
 const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+const isProd = process.env.NODE_ENV === "production";
+const dbName = isProd ? "prod" : "test";
+const suffix = isProd ? "Prod" : "Test";
 
-const handler = (_req: NextApiRequest, res: NextApiResponse) => {
+const Bucket = `streamio/${suffix}`;
+const url = `mongodb+srv://admin:admin@cluster0.vod8r.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+
+const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (_req.method === "POST") {
+      await mongoose.connect(url, { poolSize: 10, useNewUrlParser: true });
+      mongoose.connection;
       let form = new multiparty.Form();
-      form.parse(_req, (err, fields, files) => {
-        console.log({ files, fields });
+      form.parse(_req, async (_, __, files) => {
         const video = files.video[0];
-        console.log(video);
+        const Key = path.basename(video.path);
         const uploadParams = {
-          Bucket: "streamio",
-          Key: video.originalFilename,
+          Bucket,
+          Key,
           Body: fs.createReadStream(video.path),
         };
 
-        s3.upload(uploadParams, function (err: any, data: any) {
+        s3.upload(uploadParams, async function (err: any, data: any) {
           if (err) {
             console.log("Error", err);
           }
           if (data) {
+            await Video.create({
+              uuid: Key,
+              name: path.parse(video.originalFilename).name,
+            });
             console.log("Upload Success", data.Location);
             res.status(200).json({ url: data.Location });
           }
