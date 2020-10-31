@@ -43,12 +43,13 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
             console.log("Error", err);
           }
           if (data) {
+            const name = path.parse(video.originalFilename).name;
             await Video.create({
               uuid: Key,
-              name: path.parse(video.originalFilename).name,
+              name,
             });
             console.log("Upload Success", data.Location);
-            res.status(200).json({ url: data.Location });
+            res.status(200).json({ uuid: path.parse(Key).name, name });
           }
         });
       });
