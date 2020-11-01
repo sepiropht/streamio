@@ -1,24 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import multiparty from "multiparty";
-import AWS from "aws-sdk";
 import fs from "fs";
 import mongoose from "mongoose";
 import Video from "./models";
 import path from "path";
+import s3 from "../utils/aws";
 
-// Set the region
-AWS.config.update({
-  accessKeyId: "AKIAXBZO77ZFN2CUMQ6T",
-  secretAccessKey: "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",
-});
-
-AWS.config.update({ region: "eu-west-3" });
-
-// Create S3 service object
-const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-const isProd = process.env.NODE_ENV === "production";
-const dbName = isProd ? "prod" : "test";
-const suffix = isProd ? "Prod" : "Test";
+//const isProd = process.env.NODE_ENV === "production";
+const dbName = "test";
+const suffix = "Test";
 
 const Bucket = `streamio/${suffix}`;
 const url = `mongodb+srv://admin:admin@cluster0.vod8r.mongodb.net/${dbName}?retryWrites=true&w=majority`;
