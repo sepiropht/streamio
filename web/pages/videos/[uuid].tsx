@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const uuid = params?.uuid;
     // TODO get real name from mongoDB
     const items = { uuid, name: "saturations" };
-    const src = `/api/fetchVideo?uuid=${uuid}`;
+    const src = `http://localhost:4000/video?uuid=${uuid}`;
     return { props: { items, src } };
   } catch (err) {
     return { props: { errors: err.message } };

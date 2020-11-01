@@ -15,6 +15,8 @@ import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 import path from "path";
+import uploadVideo from "./api/video";
+import fetchVideo from "./api/fetchVideo";
 import { Updoot } from "./entities/Updoot";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createUpdootLoader } from "./utils/createUpdootLoader";
@@ -41,6 +43,9 @@ const main = async () => {
       credentials: true,
     })
   );
+  app.post("/upload", uploadVideo);
+  app.get("/video", fetchVideo);
+
   app.use(
     session({
       name: COOKIE_NAME,
