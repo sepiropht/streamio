@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import streamify from "../utils/streamify";
-import fs from "fs";
 import s3 from "../utils/aws";
 
 const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
@@ -17,8 +16,7 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
         //Object.keys(data).map((key) => key),
         data.Body
       );
-      fs.writeFileSync(Key, data.Body);
-      streamify(Key, _req, res);
+      streamify(data.Body, _req, res);
     });
   } catch (err) {
     res.status(500).json({ statusCode: 500, message: err.message });
