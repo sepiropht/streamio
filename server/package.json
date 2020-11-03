@@ -31,12 +31,8 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@types/aws-sdk": "^2.7.0",
-    "@types/mongoose": "^5.7.37",
-    "@types/multiparty": "^0.0.32",
     "apollo-server-express": "^2.16.1",
     "argon2": "^0.26.2",
-    "aws-sdk": "^2.783.0",
     "connect-redis": "^5.0.0",
     "cors": "^2.8.5",
     "dataloader": "^2.0.0",
@@ -45,8 +41,6 @@
     "express-session": "^1.17.1",
     "graphql": "^15.3.0",
     "ioredis": "^4.17.3",
-    "mongoose": "^5.10.11",
-    "multiparty": "^4.2.2",
     "nodemailer": "^6.4.11",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
