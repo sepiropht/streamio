@@ -22,7 +22,12 @@ export class Video extends BaseEntity {
 
   @Field()
   @Column()
-  extention!: string;
+  Key!: string;
+
+  @Field()
+  @Column()
+  @Column({ type: "boolean", default: true })
+  isConvertionPending!: boolean;
 
   @Field()
   @Column({ type: "int", default: 0 })
