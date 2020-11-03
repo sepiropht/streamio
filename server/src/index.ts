@@ -14,21 +14,21 @@ import cors from "cors";
 import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
+import { Video } from "./entities/Video";
 import path from "path";
-import uploadVideo from "./api/video";
-import fetchVideo from "./api/fetchVideo";
 import { Updoot } from "./entities/Updoot";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createUpdootLoader } from "./utils/createUpdootLoader";
+import { VideoResolver } from "./resolvers/video";
 
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,
-    // synchronize: true,
+    synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Updoot],
+    entities: [Post, User, Updoot, Video],
   });
   conn.runMigrations();
 
@@ -43,8 +43,6 @@ const main = async () => {
       credentials: true,
     })
   );
-  app.post("/upload", uploadVideo);
-  app.get("/video", fetchVideo);
 
   app.use(
     session({
@@ -68,7 +66,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver, VideoResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({

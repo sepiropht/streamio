@@ -1,0 +1,9 @@
+mutation uploadVideo($file: Upload!) {
+  uploadVideo(file: $file) {
+    title
+    id
+    extention
+    points
+    createdAt
+  }
+}
