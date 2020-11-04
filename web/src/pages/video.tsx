@@ -7,18 +7,18 @@ import { Video } from "../interfaces";
 import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 const IndexPage = () => {
   const [videos] = useState<Video[]>([]);
   const [uploadVideo] = useUploadVideoMutation();
   async function onChange(event: any) {
     uploadAws(event.target.files[0]);
-    function uploadAws(file: File) {
+    async function uploadAws(file: File) {
       const suffix = "test";
       const Bucket = `streamio/${suffix}`;
       const Key = `${uuidv4()}.${file.name.split(".").pop()}`;
-      debugger;
-      uploadVideo({
+      const { data } = await uploadVideo({
         variables: {
           input: {
             title: file.name,
@@ -35,6 +35,11 @@ const IndexPage = () => {
         if (err) return console.log(err);
         console.log(data);
       });
+
+      const res = await axios.get(
+        `http://localhost:4000/getVideo/?id=${data?.uploadVideo.id}&key=${Key}`
+      );
+      console.log(res);
     }
   }
   const ListVideos = videos.map((video, index) => (
