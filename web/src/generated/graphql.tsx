@@ -72,6 +72,7 @@ export type Video = {
   key: Scalars['String'];
   isConvertionPending: Scalars['Boolean'];
   points: Scalars['Float'];
+  size: Scalars['Float'];
   createdAt: Scalars['String'];
 };
 
@@ -179,6 +180,7 @@ export type UsernamePasswordInput = {
 export type VideoInput = {
   title: Scalars['String'];
   Key: Scalars['String'];
+  size: Scalars['Float'];
 };
 
 export type PostSnippetFragment = (
@@ -317,7 +319,7 @@ export type UploadVideoMutation = (
   { __typename?: 'Mutation' }
   & { uploadVideo: (
     { __typename?: 'Video' }
-    & Pick<Video, 'title' | 'id' | 'key' | 'isConvertionPending' | 'points' | 'createdAt'>
+    & Pick<Video, 'title' | 'id' | 'key' | 'isConvertionPending' | 'points' | 'size' | 'createdAt'>
   ) }
 );
 
@@ -686,6 +688,7 @@ export const UploadVideoDocument = gql`
     key
     isConvertionPending
     points
+    size
     createdAt
   }
 }

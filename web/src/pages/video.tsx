@@ -23,6 +23,7 @@ const IndexPage = () => {
           input: {
             title: file.name,
             Key,
+            size: file.size,
           },
         },
       });
@@ -31,15 +32,15 @@ const IndexPage = () => {
         Key,
         Body: file,
       };
-      s3.upload(uploadParams, (err: any, data: any) => {
-        if (err) return console.log(err);
-        console.log(data);
+      s3.upload(uploadParams, async (err: any, res: any) => {
+        debugger;
+        if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
+        console.log(res);
+        const r = await axios.get(
+          `http://localhost:4000/getVideo/?id=${data?.uploadVideo.id}&key=${Key}`
+        );
+        console.log(r);
       });
-
-      const res = await axios.get(
-        `http://localhost:4000/getVideo/?id=${data?.uploadVideo.id}&key=${Key}`
-      );
-      console.log(res);
     }
   }
   const ListVideos = videos.map((video, index) => (

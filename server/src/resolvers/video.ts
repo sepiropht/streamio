@@ -28,6 +28,8 @@ class VideoInput {
   title: string;
   @Field()
   Key: string;
+  @Field()
+  size: number;
 }
 
 @Resolver(Video)
@@ -44,12 +46,13 @@ export class VideoResolver {
     @Ctx() {}: MyContext
   ): Promise<Video> {
     console.log("FFFFFFFFFFFI", input);
-    const { title, Key } = input;
+    const { title, Key, size } = input;
     const { name } = path.parse(title);
 
     return Video.create({
       title: name,
       key: Key,
+      size,
     }).save();
   }
 
