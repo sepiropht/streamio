@@ -1,10 +1,9 @@
 import {
   Arg,
   Ctx,
-  // Field,
-  //Field,
+  Field,
   //FieldResolver,
-  // InputType,
+  InputType,
   Int,
   Mutation,
   //ObjectType,
@@ -19,11 +18,17 @@ import { Video } from "../entities/Video";
 // import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
+import path from "path";
+//import convert from "src/utils/convert";
 //import convert from "../utils/convert";
-import s3 from "../utils/aws";
-import { GraphQLUpload, FileUpload } from "graphql-upload";
-import { v4 as uuidv4 } from "uuid";
-import { createWriteStream } from "fs";
+
+@InputType()
+class VideoInput {
+  @Field()
+  title: string;
+  @Field()
+  Key: string;
+}
 
 @Resolver(Video)
 export class VideoResolver {
@@ -35,43 +40,16 @@ export class VideoResolver {
   @Mutation(() => Video)
   //@UseMiddleware(isAuth)
   async uploadVideo(
-    @Arg("file", () => GraphQLUpload) file: FileUpload,
+    @Arg("input") input: VideoInput,
     @Ctx() {}: MyContext
   ): Promise<Video> {
-    console.log("FFFFFFFFFFFI", file);
-    const { createReadStream, filename } = file;
+    console.log("FFFFFFFFFFFI", input);
+    const { title, Key } = input;
+    const { name } = path.parse(title);
 
-    const suffix = "test";
-    const Bucket = `streamio/${suffix}`;
-    const Key = uuidv4() + "mp4";
-    // const updateVideoStatus = () => {
-    //   console.log("updateVideoStauts");
-    //   getConnection()
-    //     .createQueryBuilder()
-    //     .update(Video)
-    //     .set({ isConvertionPending: false })
-    //     .where('"Key" = :Key', {
-    //       Key,
-    //     })
-    //     .returning("*")
-    //     .execute();
-    //   console.log("conversiotn done");
-    // };
-
-    const uploadParams = {
-      Bucket,
-      Key,
-      Body: createReadStream(),
-    };
-    createReadStream().pipe(createWriteStream("output.mkv"));
-    console.log("to awsss");
-    s3.upload(uploadParams, (err: any, data: any) => {
-      if (err) return console.log(err);
-      console.log(data);
-    });
     return Video.create({
-      title: filename,
-      Key,
+      title: name,
+      key: Key,
     }).save();
   }
 
@@ -80,13 +58,13 @@ export class VideoResolver {
   async updateVideo(
     @Arg("id", () => Int) id: number,
     @Arg("title") title: string,
-    @Arg("text") Key: string,
+    @Arg("text") key: string,
     @Ctx() { req }: MyContext
   ): Promise<Video | null> {
     const result = await getConnection()
       .createQueryBuilder()
       .update(Video)
-      .set({ title, Key })
+      .set({ title, key })
       .where('id = :id and "creatorId" = :creatorId', {
         id,
         creatorId: req.session.userId,
