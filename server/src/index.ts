@@ -16,6 +16,7 @@ import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 import { Video } from "./entities/Video";
 import path from "path";
+//import convert from "./utils/convert";
 import { Updoot } from "./entities/Updoot";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createUpdootLoader } from "./utils/createUpdootLoader";
@@ -43,7 +44,34 @@ const main = async () => {
       credentials: true,
     })
   );
-
+  // app.get("/video", async (req: any, res: any) => {
+  //   const { key } = req.query;
+  //   const { name, ext } = path.parse(key);
+  //   if (ext === ".mkv") {
+  // const video = Video.findOne(id);
+  //  if(Video.isConverstionPending) {
+  //    return res.end({processing: true})
+  //  }
+  //     const changeStatus = async (isPending: boolean) => {
+  //       await getConnection()
+  //         .createQueryBuilder()
+  //         .update(Video)
+  //         .set({ isConvertionPending: isPending })
+  //         .where("Key = :Key", {
+  //           Key: key,
+  //         })
+  //         .returning("*")
+  //         .execute();
+  //     };
+  //     await convert(key);
+  //     changeStatus(true);
+  //     try {
+  //       changeStatus(false);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }
+  // });
   app.use(
     session({
       name: COOKIE_NAME,

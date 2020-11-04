@@ -9,8 +9,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
 
 export type Query = {
@@ -71,7 +69,7 @@ export type Video = {
   __typename?: 'Video';
   id: Scalars['Float'];
   title: Scalars['String'];
-  Key: Scalars['String'];
+  key: Scalars['String'];
   isConvertionPending: Scalars['Boolean'];
   points: Scalars['Float'];
   createdAt: Scalars['String'];
@@ -140,7 +138,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationUploadVideoArgs = {
-  file: Scalars['Upload'];
+  input: VideoInput;
 };
 
 
@@ -178,6 +176,10 @@ export type UsernamePasswordInput = {
   password: Scalars['String'];
 };
 
+export type VideoInput = {
+  title: Scalars['String'];
+  Key: Scalars['String'];
+};
 
 export type PostSnippetFragment = (
   { __typename?: 'Post' }
@@ -307,7 +309,7 @@ export type UpdatePostMutation = (
 );
 
 export type UploadVideoMutationVariables = Exact<{
-  file: Scalars['Upload'];
+  input: VideoInput;
 }>;
 
 
@@ -315,7 +317,7 @@ export type UploadVideoMutation = (
   { __typename?: 'Mutation' }
   & { uploadVideo: (
     { __typename?: 'Video' }
-    & Pick<Video, 'title' | 'id' | 'isConvertionPending' | 'points' | 'createdAt'>
+    & Pick<Video, 'title' | 'id' | 'key' | 'isConvertionPending' | 'points' | 'createdAt'>
   ) }
 );
 
@@ -677,10 +679,11 @@ export type UpdatePostMutationHookResult = ReturnType<typeof useUpdatePostMutati
 export type UpdatePostMutationResult = Apollo.MutationResult<UpdatePostMutation>;
 export type UpdatePostMutationOptions = Apollo.BaseMutationOptions<UpdatePostMutation, UpdatePostMutationVariables>;
 export const UploadVideoDocument = gql`
-    mutation uploadVideo($file: Upload!) {
-  uploadVideo(file: $file) {
+    mutation uploadVideo($input: VideoInput!) {
+  uploadVideo(input: $input) {
     title
     id
+    key
     isConvertionPending
     points
     createdAt
@@ -702,7 +705,7 @@ export type UploadVideoMutationFn = Apollo.MutationFunction<UploadVideoMutation,
  * @example
  * const [uploadVideoMutation, { data, loading, error }] = useUploadVideoMutation({
  *   variables: {
- *      file: // value for 'file'
+ *      input: // value for 'input'
  *   },
  * });
  */

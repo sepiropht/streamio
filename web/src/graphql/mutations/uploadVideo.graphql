@@ -1,7 +1,8 @@
-mutation uploadVideo($file: Upload!) {
-  uploadVideo(file: $file) {
+mutation uploadVideo($input: VideoInput!) {
+  uploadVideo(input: $input) {
     title
     id
+    key
     isConvertionPending
     points
     createdAt
