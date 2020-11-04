@@ -2,7 +2,7 @@ const { Converter } = require("ffmpeg-stream");
 import s3 from "./aws";
 import path from "path";
 import stream from "stream";
-//import fs from "fs";
+
 export default async (
   Key: string
 ): Promise<{ oldKey: string; newKey: string }> => {
@@ -30,10 +30,11 @@ export default async (
       };
 
       function uploadFromStream(s3: any) {
-        var pass = new stream.PassThrough();
+        const pass = new stream.PassThrough();
+        console.log({ uploadParams });
         s3.upload({ Body: pass, ...uploadParams }, (err: any, data: any) => {
           if (err) return console.log("MMMMMMMMMMMMMMMERDE", err);
-          console.log(data);
+          console.log(data, "MMMMMMMMMMMMMMMMMMMMERDEIEIIEIRIRIRI");
         });
         return pass;
       }
@@ -43,8 +44,9 @@ export default async (
           f: "webm",
         })
         .pipe(uploadFromStream(s3))
-        .on("end", () => {
-          console.log("FINISH!!!!!!!!!!!!!!!");
+        .on("end", (data: any) => {
+          console.log(data);
+          console.log("MEREEEEEEEEEEEEEEEEEE jen ai marre");
           resolve({ oldKey: Key, newKey });
         });
 

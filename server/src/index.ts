@@ -23,6 +23,8 @@ import { createUpdootLoader } from "./utils/createUpdootLoader";
 import { VideoResolver } from "./resolvers/video";
 import convert from "./utils/convert";
 import s3 from "./utils/aws";
+//import streamify from "./utils/streamify";
+//import fs from "fs";
 
 const main = async () => {
   const conn = await createConnection({
@@ -75,7 +77,7 @@ const main = async () => {
         console.log("after status");
       };
       console.log({ video }, "YYYYYYYYYYYYYYYYYYYYYYYYY");
-      await changeStatus(false, key, key);
+      await changeStatus(true, key, key);
       console.log("before send");
       res.json({ processing: true });
       console.log("after send");
@@ -91,11 +93,17 @@ const main = async () => {
         console.log(err);
       }
     }
+
     const uploadParams = {
       Bucket: "streamio/test",
       Key: key,
     };
-    s3.getObject(uploadParams);
+    // s3.getObject(uploadParams, (_: any, data: any) => {
+    //   console.log("FROM S3 WHE GET", data.Body);
+    //   streamify(data.Body, req, res);
+    // });
+    s3.getObject(uploadParams).createReadStream().pipe(res);
+    //.pipe(streamify(req, res, video?.size))
   });
   app.use(
     session({
