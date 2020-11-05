@@ -35,10 +35,19 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     // user is logged in
   } else {
     body = (
-      <Flex align="center">
+      <Flex alignItems="center">
         <NextLink href="/create-post">
-          <Button as={Link} mr={4}>
-            create post
+          <Button
+            as={Link}
+            bg="rgb(237, 255, 244)"
+            borderColor="rgba(25, 150, 98, 0.26)"
+            borderStyle="solide"
+            borderRadius="3px"
+            borderWidth="1px"
+            color="rgb(18, 119, 18)"
+            mr={4}
+          >
+            Upgrade
           </Button>
         </NextLink>
         <Box mr={2}>{data.me.username}</Box>
@@ -57,11 +66,22 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex zIndex={1} position="sticky" top={0} bg="tan" p={4}>
-      <Flex flex={1} m="auto" align="center" maxW={800}>
+    <Flex
+      zIndex={1}
+      position="sticky"
+      top={0}
+      fontSize="16px"
+      bg="rgb(255, 255, 255)"
+      borderBottom="rgb(232, 232, 232)"
+      borderBottomWidth="1px"
+      lineHeight="24px"
+      borderStyle="solid"
+      pr={10}
+    >
+      <Flex flex={1} m="auto" justifyContent="space-between">
         <NextLink href="/">
           <Link>
-            <Heading>LiReddit</Heading>
+            <Heading>Streamio</Heading>
           </Link>
         </NextLink>
         <Box ml={"auto"}>{body}</Box>
