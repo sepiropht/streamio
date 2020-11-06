@@ -44,7 +44,9 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             borderStyle="solide"
             borderRadius="3px"
             borderWidth="1px"
+            padding="2px 14px 2px 14px"
             color="rgb(18, 119, 18)"
+            boxShadow="0 2px 2px rgba(15,148,33,.1)"
             mr={4}
           >
             Upgrade
