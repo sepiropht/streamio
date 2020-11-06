@@ -8,6 +8,8 @@ import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { FormControl, Button, Box } from "@chakra-ui/core";
+import { Card } from "../components/Card";
 
 const IndexPage = () => {
   const [videos] = useState<Video[]>([]);
@@ -43,24 +45,49 @@ const IndexPage = () => {
       });
     }
   }
-  const ListVideos = videos.map((video, index) => (
+  const ListVideos = [1, 2, 3].map((_, index) => (
     <li key={index}>
-      {" "}
-      <Link href="/videos/[uuid]" as={`/videos/${video.uuid}`}>
-        <a>
-          {video.uuid}: {video.name}
-        </a>
-      </Link>
+      <Card src={""} views={10} link={""} name={""}></Card>
     </li>
   ));
   return (
     <Layout>
-      <input
-        type="file"
-        name="file"
-        placeholder="paste video url"
-        onChange={onChange}
-      />
+      <Box bg="white" padding="10px">
+        <FormControl display="none" bg="white">
+          <input
+            className="upload-input"
+            type="file"
+            name="file"
+            placeholder="paste video url"
+            onChange={onChange}
+          />
+        </FormControl>
+        <Button
+          height="36px"
+          fontWeight="600"
+          bg="#0f90fa"
+          color="white"
+          line-height="24px"
+          font-size="16px"
+          padding=" 0 18 0 18px"
+          verticalAlign="inherit"
+          border="none"
+          position="relative"
+          letterSpacing="0"
+          transition="background-color .2s"
+          onClick={() => {
+            const clickEvent = new MouseEvent("click", {
+              view: window,
+              bubbles: true,
+              cancelable: false,
+            });
+            const input = document.querySelector(".upload-input");
+            input?.dispatchEvent(clickEvent);
+          }}
+        >
+          Upload Video
+        </Button>
+      </Box>
       <ul>{ListVideos}</ul>
     </Layout>
   );
