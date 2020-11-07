@@ -54,9 +54,14 @@ const IndexPage = () => {
     }
   }
   const ListVideos = [1, 2, 3].map((_, index) => (
-    <ListItem key={index}>
-      <Card src={""} views={10} link={""} name={""} title="yeahhh"></Card>
-    </ListItem>
+    <Card
+      key={index}
+      src={""}
+      views={10}
+      link={""}
+      name={""}
+      title="yeahhh"
+    ></Card>
   ));
   return (
     <Layout>

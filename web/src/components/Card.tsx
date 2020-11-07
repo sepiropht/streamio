@@ -19,7 +19,13 @@ export const Card: React.FC<CardProps> = ({
     <Box bg="white" border="1px solid #e8e8e8" border-radius="2px">
       <Box width="100%">
         <Box cursor="pointer"></Box>
-        <Image objectFit="cover" height="120px" width="100%" src={src}></Image>
+        <Image
+          objectFit="cover"
+          minHeight="160px"
+          height="120px"
+          width="100%"
+          src={src}
+        ></Image>
       </Box>
       <Box padding="10px">
         <Textarea
@@ -42,7 +48,7 @@ export const Card: React.FC<CardProps> = ({
         ></Textarea>
         <Flex alignItems="start" justifyContent="space-between">
           <NextLink href="/">
-            <Box color="#007bff">https://streamable.com/qzpehe</Box>
+            <Box color="#007bff">https://streamio.com/qzpehe</Box>
           </NextLink>
           <Button
             size="xs"
