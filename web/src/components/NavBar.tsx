@@ -79,6 +79,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
       lineHeight="24px"
       borderStyle="solid"
       pr={10}
+      padding="7px"
     >
       <Flex flex={1} m="auto" justifyContent="space-between">
         <NextLink href="/">

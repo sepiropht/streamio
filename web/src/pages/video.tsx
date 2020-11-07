@@ -8,7 +8,14 @@ import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { FormControl, Button, Box } from "@chakra-ui/core";
+import {
+  FormControl,
+  Button,
+  Box,
+  Flex,
+  List,
+  ListItem,
+} from "@chakra-ui/core";
 import { Card } from "../components/Card";
 
 const IndexPage = () => {
@@ -46,13 +53,13 @@ const IndexPage = () => {
     }
   }
   const ListVideos = [1, 2, 3].map((_, index) => (
-    <li key={index}>
-      <Card src={""} views={10} link={""} name={""}></Card>
-    </li>
+    <ListItem key={index}>
+      <Card src={""} views={10} link={""} name={""} title="yeahhh"></Card>
+    </ListItem>
   ));
   return (
     <Layout>
-      <Box bg="white" padding="10px">
+      <Flex bg="white" padding="10px" marginBottom="20px">
         <FormControl display="none" bg="white">
           <input
             className="upload-input"
@@ -69,7 +76,7 @@ const IndexPage = () => {
           color="white"
           line-height="24px"
           font-size="16px"
-          padding=" 0 18 0 18px"
+          padding=" 0 35px 0 35px"
           verticalAlign="inherit"
           border="none"
           position="relative"
@@ -87,8 +94,20 @@ const IndexPage = () => {
         >
           Upload Video
         </Button>
-      </Box>
-      <ul>{ListVideos}</ul>
+        <FormControl
+          marginLeft="20px"
+          fontWeight="extrabold"
+          textAlign="left"
+          padding="5px"
+          bg="transparent"
+          borderBottom="1px solid #ddd;"
+          width="100%"
+          fontSize="16px"
+        >
+          <input type="text" placeholder="Paste a video Url"></input>
+        </FormControl>
+      </Flex>
+      <List>{ListVideos}</List>
     </Layout>
   );
 };
