@@ -53,7 +53,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           </Button>
         </NextLink>
         <Box mr={2}>{data.me.username}</Box>
-        <Button
+        {/* <Button
           onClick={async () => {
             await logout();
             await apolloClient.resetStore();
@@ -62,7 +62,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           variant="link"
         >
           logout
-        </Button>
+        </Button> */}
       </Flex>
     );
   }
