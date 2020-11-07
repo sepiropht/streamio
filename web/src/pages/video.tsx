@@ -14,6 +14,7 @@ import {
   Box,
   Flex,
   List,
+  Grid,
   ListItem,
 } from "@chakra-ui/core";
 import { Card } from "../components/Card";
@@ -76,6 +77,7 @@ const IndexPage = () => {
           color="white"
           line-height="24px"
           font-size="16px"
+          minW="172px"
           padding=" 0 35px 0 35px"
           verticalAlign="inherit"
           border="none"
@@ -101,13 +103,23 @@ const IndexPage = () => {
           padding="5px"
           bg="transparent"
           borderBottom="1px solid #ddd;"
-          width="100%"
+          width={["30%", "100%", "100%", "100%"]}
           fontSize="16px"
         >
           <input type="text" placeholder="Paste a video Url"></input>
         </FormControl>
       </Flex>
-      <List>{ListVideos}</List>
+      <Grid
+        gridTemplateColumns={[
+          "1fr",
+          "repeat(2, 1fr)",
+          "repeat(2, 1fr)",
+          "repeat(3, 1fr)",
+        ]}
+        gap={4}
+      >
+        {ListVideos}
+      </Grid>
     </Layout>
   );
 };
