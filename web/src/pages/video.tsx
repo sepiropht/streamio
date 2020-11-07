@@ -103,7 +103,7 @@ const IndexPage = () => {
           padding="5px"
           bg="transparent"
           borderBottom="1px solid #ddd;"
-          width={["30%", "100%", "100%", "100%"]}
+          width={["100%", "100%", "100%", "100%"]}
           fontSize="16px"
         >
           <input type="text" placeholder="Paste a video Url"></input>
