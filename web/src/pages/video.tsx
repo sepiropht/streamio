@@ -111,7 +111,11 @@ const IndexPage = () => {
           width={["100%", "100%", "100%", "100%"]}
           fontSize="16px"
         >
-          <input type="text" placeholder="Paste a video Url"></input>
+          <input
+            type="text"
+            style={{ width: "100%" }}
+            placeholder="Paste a video Url"
+          ></input>
         </FormControl>
       </Flex>
       <Grid
