@@ -3,6 +3,12 @@ export type User = {
   name: string;
 };
 export type Video = {
-  uuid: string;
-  name: string;
+  title: string;
+  id: string;
+  key: string;
+  isConvertionPending: string;
+  points: number;
+  size: number;
+  __typeName: string;
+  createdAt: number;
 };

@@ -20,14 +20,17 @@ import {
 import { Card } from "../components/Card";
 
 const IndexPage = () => {
-  const [videos] = useState<Video[]>([]);
+  let Data;
+  const [videos, setVideo] = useState<any[]>([]);
   const [uploadVideo] = useUploadVideoMutation();
+  let key;
   async function onChange(event: any) {
     uploadAws(event.target.files[0]);
     async function uploadAws(file: File) {
       const suffix = "test";
       const Bucket = `streamio/${suffix}`;
       const Key = `${uuidv4()}.${file.name.split(".").pop()}`;
+      key = Key;
       const { data } = await uploadVideo({
         variables: {
           input: {
@@ -42,6 +45,10 @@ const IndexPage = () => {
         Key,
         Body: file,
       };
+      if (data) {
+        Data = data;
+        setVideo([...videos, { ...data?.uploadVideo }]);
+      }
       s3.upload(uploadParams, async (err: any, res: any) => {
         if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
         console.log(res);
@@ -61,6 +68,7 @@ const IndexPage = () => {
       views={10}
       link="https://streamio/douazbdjabzda"
       name={""}
+      videoUrl={`http://localhost:4000/getVideo/?id=69&key=7c12ffd6-c3c4-4add-8a77-63aaa4d238e3.mp4}`}
       title="20191226_ferme"
     ></Card>
   ));
