@@ -93,7 +93,7 @@ const main = async () => {
         console.log(err);
       }
     }
-
+    console.log({ key });
     const uploadParams = {
       Bucket: "streamio/test",
       Key: key,
