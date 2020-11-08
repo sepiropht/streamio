@@ -39,7 +39,7 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
           onClick={() => close(false)}
         ></Icon>
       </Box>
-      <video controls>
+      <video controls autoPlay loop>
         <source src={videoUrl} type="video/mp4"></source>
       </video>
     </Flex>

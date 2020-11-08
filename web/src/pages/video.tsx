@@ -68,7 +68,7 @@ const IndexPage = () => {
       views={10}
       link="https://streamio/douazbdjabzda"
       name={""}
-      videoUrl={`http://localhost:4000/getVideo/?id=69&key=7c12ffd6-c3c4-4add-8a77-63aaa4d238e3.mp4}`}
+      videoUrl={`http://localhost:4000/getVideo/?id=69&key=7c12ffd6-c3c4-4add-8a77-63aaa4d238e3.mp4`}
       title="20191226_ferme"
     ></Card>
   ));
@@ -134,7 +134,7 @@ const IndexPage = () => {
           "repeat(2, 1fr)",
           "repeat(3, 1fr)",
         ]}
-        gap={4}
+        gap={5}
       >
         {ListVideos}
       </Grid>
