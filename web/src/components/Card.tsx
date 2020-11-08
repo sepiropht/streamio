@@ -8,14 +8,7 @@ interface CardProps {
   name: string;
   title: string;
 }
-export const Card: React.FC<CardProps> = ({
-  src,
-  views = 0,
-  title,
-  link = "https://streamio/douazbdjabzda",
-}) => {
-  src =
-    "https://cdn-cf-east.streamable.com/image/qzpehe.jpg?Expires=1604878380&Signature=kBqTh6VhDTvqdOBxWUOh0Can8JoGRkT1prg-9fo4zp0FOScNSzI2kB-tYXvwlwCNBSEAawQ99Es~3X3IdwBJZXs49NynNF198O66j1zUJBznOt12Cf-VTKl0fdp9ZMSq3T3Pqn6RaFbe1JwqU2AqMhAC2d577iqGj1qw18syO4VofN2zJj~qch6Ljjw9mq~Wvvfw1JZTNr6212jNbwgykdpgA5FoVH-c8~~FQl3EBEYz2h1WW0CwDaymYSlnR12aH9X8Q96cG17A3oQUWIOkcoQmep6fL6MBQZd0UozwnNtAzsoRYyZ8OgN~L~kbzb3YuoUUGaGx4m1CK~DAj-1sXA__&Key-Pair-Id=APKAIEYUVEN4EVB2OKEQ";
+export const Card: React.FC<CardProps> = ({ src, views, title, link }) => {
   const [isHover, setHover] = useState(false);
   return (
     <Box bg="white" border="1px solid #e8e8e8" border-radius="2px">
@@ -74,6 +67,7 @@ export const Card: React.FC<CardProps> = ({
           resize="none"
           padding="2px 4px"
           paddingLeft="0"
+          value={title}
           fontWeight={600}
           lineHeight={1.5}
           display="flex"
@@ -86,7 +80,7 @@ export const Card: React.FC<CardProps> = ({
         ></Textarea>
         <Flex alignItems="start" justifyContent="flex-start">
           <NextLink href="/">
-            <Box color="#007bff">https://streamio.com/qzpehe</Box>
+            <Box color="#007bff">{link}</Box>
           </NextLink>
           <Button
             size="xs"

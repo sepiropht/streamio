@@ -43,7 +43,6 @@ const IndexPage = () => {
         Body: file,
       };
       s3.upload(uploadParams, async (err: any, res: any) => {
-        debugger;
         if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
         console.log(res);
         const r = await axios.get(
@@ -56,11 +55,13 @@ const IndexPage = () => {
   const ListVideos = [1, 2, 3].map((_, index) => (
     <Card
       key={index}
-      src={""}
+      src={
+        "https://cdn-cf-east.streamable.com/image/qzpehe.jpg?Expires=1604878380&Signature=kBqTh6VhDTvqdOBxWUOh0Can8JoGRkT1prg-9fo4zp0FOScNSzI2kB-tYXvwlwCNBSEAawQ99Es~3X3IdwBJZXs49NynNF198O66j1zUJBznOt12Cf-VTKl0fdp9ZMSq3T3Pqn6RaFbe1JwqU2AqMhAC2d577iqGj1qw18syO4VofN2zJj~qch6Ljjw9mq~Wvvfw1JZTNr6212jNbwgykdpgA5FoVH-c8~~FQl3EBEYz2h1WW0CwDaymYSlnR12aH9X8Q96cG17A3oQUWIOkcoQmep6fL6MBQZd0UozwnNtAzsoRYyZ8OgN~L~kbzb3YuoUUGaGx4m1CK~DAj-1sXA__&Key-Pair-Id=APKAIEYUVEN4EVB2OKEQ"
+      }
       views={10}
-      link={""}
+      link="https://streamio/douazbdjabzda"
       name={""}
-      title="yeahhh"
+      title="20191226_ferme"
     ></Card>
   ));
   return (
@@ -77,7 +78,7 @@ const IndexPage = () => {
         </FormControl>
         <Button
           height="36px"
-          fontWeight="600"
+          fontWeight={600}
           bg="#0f90fa"
           color="white"
           line-height="24px"
