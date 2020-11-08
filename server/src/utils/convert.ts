@@ -1,7 +1,9 @@
-const { Converter } = require("ffmpeg-stream");
 import s3 from "./aws";
 import path from "path";
 import stream from "stream";
+import ffmpeg from "fluent-ffmpeg";
+import generateThumbnail from "./generateThumbnail";
+import fs from "fs";
 
 export default async (
   Key: string
@@ -9,17 +11,13 @@ export default async (
   return new Promise((resolve, reject) => {
     try {
       console.log("IIIIIIIIIII CONVERT");
-      const converter = new Converter();
 
-      const input = converter.createInputStream({});
-
-      console.log(Key, "KEEEEEEEEEEEEEEEEEEEEYYYYYY");
-      s3.getObject({
-        Bucket: "streamio/test",
-        Key,
-      })
-        .createReadStream()
-        .pipe(input);
+      const videoStreamFromAws = s3
+        .getObject({
+          Bucket: "streamio/test",
+          Key,
+        })
+        .createReadStream();
       console.log("yeah");
 
       const { name } = path.parse(Key);
@@ -39,18 +37,19 @@ export default async (
         return pass;
       }
 
-      converter
-        .createOutputStream({
-          f: "webm",
-        })
+      ffmpeg(videoStreamFromAws)
+        .audioCodec("aac")
+        .videoCodec("libx264")
+        .format("mp4")
         .pipe(uploadFromStream(s3))
-        .on("end", (data: any) => {
+        .on("end", async (data: any) => {
           console.log(data);
           console.log("MEREEEEEEEEEEEEEEEEEE jen ai marre");
+          const pathFile = `tmp\${Key}`;
+          fs.writeFileSync(pathFile, data.Body);
+          await generateThumbnail(pathFile, Key);
           resolve({ oldKey: Key, newKey });
         });
-
-      converter.run();
     } catch (err) {
       reject(err);
     }
