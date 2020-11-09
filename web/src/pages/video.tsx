@@ -8,6 +8,7 @@ import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { FaCloudUploadAlt } from "react-icons/fa";
 import {
   FormControl,
   Button,
@@ -90,10 +91,11 @@ const IndexPage = () => {
           bg="#0f90fa"
           color="white"
           line-height="24px"
+          display="flex"
+          justifyContent="space-around"
+          alignItems="center"
           font-size="16px"
           minW="172px"
-          padding=" 0 35px 0 35px"
-          verticalAlign="inherit"
           border="none"
           position="relative"
           letterSpacing="0"
@@ -108,6 +110,9 @@ const IndexPage = () => {
             input?.dispatchEvent(clickEvent);
           }}
         >
+          <Box verticalAlign="center" fontSize={23}>
+            <FaCloudUploadAlt></FaCloudUploadAlt>
+          </Box>
           Upload Video
         </Button>
         <FormControl
