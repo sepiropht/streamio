@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Textarea, Button } from "@chakra-ui/core";
 import { useState } from "react";
 import NextLink from "next/link";
+import { ImShare2 } from "react-icons/im";
 import { ModalPlayer } from "./ModalPlayer";
 interface CardProps {
   src: string;
@@ -101,10 +102,11 @@ export const Card: React.FC<CardProps> = ({
             <Button
               size="xs"
               bg="#748490"
+              display="flex"
+              justifyContent="space-around"
               color="white"
               alignSelf="center"
               marginLeft="10px"
-              padding="0px 9px 0px 15px"
               fontSize="10px"
               lineHeight={1.5}
               textAlign="center"
@@ -112,6 +114,9 @@ export const Card: React.FC<CardProps> = ({
               top="-5px"
               right={0}
             >
+              <Box marginRight="10px" fontSize={11}>
+                <ImShare2></ImShare2>
+              </Box>
               Copy link
             </Button>
           </Flex>
