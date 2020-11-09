@@ -21,7 +21,7 @@ export default async (videoPath: string, Key: string) => {
           resolve();
         });
       const { name } = path.parse(Key);
-      const newKey = name + ".mp4";
+      const newKey = name + ".png";
       const uploadParams = {
         Bucket: "streamio/test",
         Key: newKey,
