@@ -33,6 +33,7 @@
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
     "@types/fluent-ffmpeg": "^2.1.16",
+    "@types/youtube-dl": "^3.0.0",
     "apollo-server-express": "^2.16.1",
     "argon2": "^0.26.2",
     "aws-sdk": "^2.784.0",
@@ -50,7 +51,8 @@
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.0.0-rc.3",
     "typeorm": "^0.2.25",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "youtube-dl": "^3.0.2"
   },
   "mikro-orm": {
     "useTsNode": true,
