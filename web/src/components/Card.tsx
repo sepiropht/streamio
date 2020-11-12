@@ -1,39 +1,63 @@
 import { Box, Flex, Image, Textarea, Button, Spinner } from "@chakra-ui/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NextLink from "next/link";
+import axios from "axios";
 import { ImShare2 } from "react-icons/im";
 import { ModalPlayer } from "./ModalPlayer";
-import useLocalStorage from "../utils/useLocalStorage";
+
 interface CardProps {
-  key: string;
+  Key: string;
   src: string;
   views: number;
   link: string;
   title: string;
   videoUrl: string;
   isCardLoaded: boolean;
+  id: number;
 }
 export const Card: React.FC<CardProps> = ({
+  id,
   src,
   views,
   title,
   link,
   videoUrl,
-  key,
+  Key,
   isCardLoaded = true,
 }) => {
   const [isHover, setHover] = useState(false);
   const [isVisible, showModal] = useState(false);
+  const [isCardLoad, setCardLoader] = useState(isCardLoaded);
+  const [video, setVideoUrl] = useState("");
+  useEffect(() => {
+    async function waitUntil() {
+      return await new Promise((resolve) => {
+        console.log("polling", { id, Key });
+        const interval = setInterval(async () => {
+          const { data } = await axios.get(
+            `http://localhost:4000/processVideo/?id=${id}&key=${Key}`
+          );
+          if (data.isAlreadyConvert) {
+            setCardLoader(true);
+            setVideoUrl(videoUrl);
+            resolve("foo");
+            clearInterval(interval);
+          }
+        }, 1000);
+      });
+    }
+    waitUntil();
+  }, []);
 
   return (
     <>
       <ModalPlayer
         isVisible={isVisible}
-        videoUrl={videoUrl}
+        videoUrl={video}
         close={showModal}
       ></ModalPlayer>
       <Spinner
-        style={{ display: isCardLoaded ? "none" : "block" }}
+        style={{ display: isCardLoad ? "none" : "block" }}
         thickness="4px"
         speed="0.65s"
         emptyColor="gray.200"
@@ -43,7 +67,7 @@ export const Card: React.FC<CardProps> = ({
         Still Processing the video...
       </Spinner>
       <Box
-        style={{ display: isCardLoaded ? "block" : "none" }}
+        style={{ display: isCardLoad ? "block" : "none" }}
         bg="white"
         border="1px solid #e8e8e8"
         border-radius="2px"

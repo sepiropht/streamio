@@ -17,7 +17,6 @@ export default async (
           Key,
         })
         .createReadStream();
-      console.log("yeah");
 
       const { name } = path.parse(Key);
       const newKey = name + ".mp4";
@@ -33,9 +32,6 @@ export default async (
         .format("mp4")
         .save(filePath)
         .on("end", async () => {
-          console.log(
-            "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMME"
-          );
           await s3
             .upload({
               Body: fs.createReadStream(filePath),

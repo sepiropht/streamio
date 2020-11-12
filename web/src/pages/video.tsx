@@ -26,7 +26,7 @@ const IndexPage = () => {
     async function uploadAws(file: File) {
       const suffix = "test";
       const Bucket = `streamio/${suffix}`;
-      const Key = `${uuidv4()}.${file.name.split(".").pop()}`;
+      const Key = `${uuidv4()}.mp4`;
       const { data } = await uploadVideo({
         variables: {
           input: {
@@ -55,18 +55,22 @@ const IndexPage = () => {
       });
     }
   }
-
-  const ListVideos = videos.map(({ id, title, points, key }) => (
-    <Card
-      key={key}
-      src={`http://localhost:4000/static/images/${key}.jpg`}
-      views={points}
-      link={`http:///localhost:4000/${key}`}
-      videoUrl={`http://localhost:4000/getVideo/?id=${id}&key=${key}`}
-      title={title}
-      isCardLoaded={true}
-    ></Card>
-  ));
+  console.log(videos);
+  const ListVideos = videos.map(({ id, title, points, key }) => {
+    console.log(key);
+    return (
+      <Card
+        id={id}
+        Key={key}
+        src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
+        views={points}
+        link={`http:///localhost:4000/${key}`}
+        videoUrl={`http://localhost:4000/getVideo/?id=${id}&key=${key}`}
+        title={title}
+        isCardLoaded={false}
+      ></Card>
+    );
+  });
   return (
     <Layout>
       <Flex bg="white" padding="10px" marginBottom="20px">
