@@ -92,14 +92,20 @@ const main = async () => {
     }
     console.log({ key });
 
-    return res.json({ processing: video?.isConvertionPending });
+    //return res.json({ processing: video?.isConvertionPending });
   });
   app.get("/getVideo", async (req: any, res: any) => {
-    const { key } = req.query;
+    console.log("getVideo");
+    const { id, key } = req.query;
     const uploadParams = {
       Bucket: "streamio/test",
       Key: key,
     };
+    const video = await Video.findOne(id);
+    console.log({ video });
+    if (video?.isConvertionPending) {
+      return res.json({ processing: true });
+    }
     s3.getObject(uploadParams).createReadStream().pipe(res);
   });
   app.use("/static", express.static(__dirname + "/images"));
