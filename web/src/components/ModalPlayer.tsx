@@ -12,7 +12,6 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
   videoUrl,
   close,
 }) => {
-  const [_, setClose] = useState(isVisible);
   return (
     <Flex
       position="fixed"

@@ -9,29 +9,24 @@ import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import {
-  FormControl,
-  Button,
-  Box,
-  Flex,
-  List,
-  Grid,
-  ListItem,
-} from "@chakra-ui/core";
+import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/core";
+import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
 
 const IndexPage = () => {
-  let Data;
-  const [videos, setVideo] = useState<any[]>([]);
+  const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
+    "data",
+    []
+  );
+  const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
   const [uploadVideo] = useUploadVideoMutation();
-  let key;
+
   async function onChange(event: any) {
     uploadAws(event.target.files[0]);
     async function uploadAws(file: File) {
       const suffix = "test";
       const Bucket = `streamio/${suffix}`;
       const Key = `${uuidv4()}.${file.name.split(".").pop()}`;
-      key = Key;
       const { data } = await uploadVideo({
         variables: {
           input: {
@@ -47,30 +42,29 @@ const IndexPage = () => {
         Body: file,
       };
       if (data) {
-        Data = data;
         setVideo([...videos, { ...data?.uploadVideo }]);
+        setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
       }
       s3.upload(uploadParams, async (err: any, res: any) => {
         if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
         console.log(res);
         const r = await axios.get(
-          `http://localhost:4000/getVideo/?id=${data?.uploadVideo.id}&key=${Key}`
+          `http://localhost:4000/processVideo/?id=${data?.uploadVideo.id}&key=${Key}`
         );
         console.log(r);
       });
     }
   }
-  const ListVideos = [1, 2, 3].map((_, index) => (
+
+  const ListVideos = videos.map(({ id, title, points, key }) => (
     <Card
-      key={index}
-      src={
-        "https://cdn-cf-east.streamable.com/image/qzpehe.jpg?Expires=1604878380&Signature=kBqTh6VhDTvqdOBxWUOh0Can8JoGRkT1prg-9fo4zp0FOScNSzI2kB-tYXvwlwCNBSEAawQ99Es~3X3IdwBJZXs49NynNF198O66j1zUJBznOt12Cf-VTKl0fdp9ZMSq3T3Pqn6RaFbe1JwqU2AqMhAC2d577iqGj1qw18syO4VofN2zJj~qch6Ljjw9mq~Wvvfw1JZTNr6212jNbwgykdpgA5FoVH-c8~~FQl3EBEYz2h1WW0CwDaymYSlnR12aH9X8Q96cG17A3oQUWIOkcoQmep6fL6MBQZd0UozwnNtAzsoRYyZ8OgN~L~kbzb3YuoUUGaGx4m1CK~DAj-1sXA__&Key-Pair-Id=APKAIEYUVEN4EVB2OKEQ"
-      }
-      views={10}
-      link="https://streamio/douazbdjabzda"
-      name={""}
-      videoUrl={`http://localhost:4000/getVideo/?id=69&key=7c12ffd6-c3c4-4add-8a77-63aaa4d238e3.mp4`}
-      title="20191226_ferme"
+      key={key}
+      src={`http://localhost:4000/static/images/${key}.jpg`}
+      views={points}
+      link={`http:///localhost:4000/${key}`}
+      videoUrl={`http://localhost:4000/getVideo/?id=${id}&key=${key}`}
+      title={title}
+      isCardLoaded={true}
     ></Card>
   ));
   return (

@@ -3,9 +3,6 @@ mutation uploadVideo($input: VideoInput!) {
     title
     id
     key
-    isConvertionPending
     points
-    size
-    createdAt
   }
 }
