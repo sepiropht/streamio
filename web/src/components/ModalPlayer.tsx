@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/core";
 import { Icon } from "@chakra-ui/core";
-import { useState } from "react";
+import { useEffect } from "react";
 
 interface ModalPlayerProps {
   videoUrl: string;
@@ -12,6 +12,16 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
   videoUrl,
   close,
 }) => {
+  useEffect(() => {
+    const videoDomElement = document.querySelector("video");
+    console.log({ videoUrl });
+    console.log(videoDomElement?.src);
+    if (isVisible && videoUrl === videoDomElement?.currentSrc) {
+      videoDomElement?.play();
+    } else {
+      videoDomElement?.pause();
+    }
+  }, [isVisible]);
   return (
     <Flex
       position="fixed"
