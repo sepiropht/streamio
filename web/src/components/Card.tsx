@@ -1,15 +1,17 @@
-import { Box, Flex, Image, Textarea, Button } from "@chakra-ui/core";
+import { Box, Flex, Image, Textarea, Button, Spinner } from "@chakra-ui/core";
 import { useState } from "react";
 import NextLink from "next/link";
 import { ImShare2 } from "react-icons/im";
 import { ModalPlayer } from "./ModalPlayer";
+import useLocalStorage from "../utils/useLocalStorage";
 interface CardProps {
+  key: string;
   src: string;
   views: number;
   link: string;
-  name: string;
   title: string;
   videoUrl: string;
+  isCardLoaded: boolean;
 }
 export const Card: React.FC<CardProps> = ({
   src,
@@ -17,9 +19,12 @@ export const Card: React.FC<CardProps> = ({
   title,
   link,
   videoUrl,
+  key,
+  isCardLoaded = true,
 }) => {
   const [isHover, setHover] = useState(false);
   const [isVisible, showModal] = useState(false);
+
   return (
     <>
       <ModalPlayer
@@ -27,7 +32,22 @@ export const Card: React.FC<CardProps> = ({
         videoUrl={videoUrl}
         close={showModal}
       ></ModalPlayer>
-      <Box bg="white" border="1px solid #e8e8e8" border-radius="2px">
+      <Spinner
+        style={{ display: isCardLoaded ? "none" : "block" }}
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="gray.200"
+        color="blue.500"
+        size="xl"
+      >
+        Still Processing the video...
+      </Spinner>
+      <Box
+        style={{ display: isCardLoaded ? "block" : "none" }}
+        bg="white"
+        border="1px solid #e8e8e8"
+        border-radius="2px"
+      >
         <Box
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}

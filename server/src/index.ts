@@ -48,63 +48,61 @@ const main = async () => {
       credentials: true,
     })
   );
-  app.get("/getVideo", async (req: any, res: any) => {
-    console.log("GETVIDEO", req.query);
+  app.get("/processVideo", async (req: any, res: any) => {
+    console.log("processVideo", req.query);
     const { id, key } = req.query;
-    const { ext } = path.parse(key);
     const video = await Video.findOne(id);
-    if (ext === ".mkv") {
-      console.log({ video });
-      if (video?.isConvertionPending) {
-        return res.json({ processing: true });
-      }
-      const changeStatus = async (
-        isPending: boolean,
-        oldK: string,
-        newK: string
-      ) => {
-        console.log("before status");
-        await getConnection()
-          .createQueryBuilder()
-          .update(Video)
-          .set({ isConvertionPending: isPending, key: newK })
-          .where("key = :key", {
-            key: oldK,
-          })
-          .returning("*")
-          .execute();
+    console.log({ video });
+    if (video?.isConvertionPending) {
+      return res.json({ processing: true });
+    }
+    const changeStatus = async (
+      isPending: boolean,
+      oldK: string,
+      newK: string
+    ) => {
+      console.log("before status");
+      await getConnection()
+        .createQueryBuilder()
+        .update(Video)
+        .set({ isConvertionPending: isPending, key: newK })
+        .where("key = :key", {
+          key: oldK,
+        })
+        .returning("*")
+        .execute();
 
-        console.log("after status");
-      };
-      console.log({ video }, "YYYYYYYYYYYYYYYYYYYYYYYYY");
-      await changeStatus(true, key, key);
-      console.log("before send");
-      res.json({ processing: true });
-      console.log("after send");
-      console.log("beafroe convert send");
+      console.log("after status");
+    };
+    console.log({ video }, "YYYYYYYYYYYYYYYYYYYYYYYYY");
+    await changeStatus(true, key, key);
+    console.log("before send");
+    res.json({ processing: true });
+    console.log("after send");
+    console.log("beafroe convert send");
 
-      const { oldKey, newKey } = await convert(key);
-      console.log("RETURNE CONVERT", { oldKey, newKey });
-      console.log("after convert");
+    const { oldKey, newKey } = await convert(key);
+    console.log("RETURNE CONVERT", { oldKey, newKey });
+    console.log("after convert");
 
-      try {
-        await changeStatus(false, oldKey, newKey);
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      await changeStatus(false, oldKey, newKey);
+    } catch (err) {
+      console.log(err);
     }
     console.log({ key });
+
+    return res.json({ processing: video?.isConvertionPending });
+  });
+  app.get("/getVideo", async (req: any, res: any) => {
+    const { key } = req.query;
     const uploadParams = {
       Bucket: "streamio/test",
       Key: key,
     };
-    // s3.getObject(uploadParams, (_: any, data: any) => {
-    //   console.log("FROM S3 WHE GET", data.Body);
-    //   streamify(data.Body, req, res);
-    // });
     s3.getObject(uploadParams).createReadStream().pipe(res);
-    //.pipe(streamify(req, res, video?.size))
   });
+  app.use("/static", express.static(__dirname + "/images"));
   app.use(
     session({
       name: COOKIE_NAME,

@@ -4,11 +4,7 @@ export type User = {
 };
 export type Video = {
   title: string;
-  id: string;
+  id: number;
   key: string;
-  isConvertionPending: string;
   points: number;
-  size: number;
-  __typeName: string;
-  createdAt: number;
 };

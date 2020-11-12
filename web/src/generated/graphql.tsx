@@ -319,7 +319,7 @@ export type UploadVideoMutation = (
   { __typename?: 'Mutation' }
   & { uploadVideo: (
     { __typename?: 'Video' }
-    & Pick<Video, 'title' | 'id' | 'key' | 'isConvertionPending' | 'points' | 'size' | 'createdAt'>
+    & Pick<Video, 'title' | 'id' | 'key' | 'points'>
   ) }
 );
 
@@ -686,10 +686,7 @@ export const UploadVideoDocument = gql`
     title
     id
     key
-    isConvertionPending
     points
-    size
-    createdAt
   }
 }
     `;
