@@ -1,9 +1,10 @@
-import s3 from "./aws";
-import stream from "stream";
 import ffmpeg from "fluent-ffmpeg";
-import path from "path";
+import fs from "fs";
 
-export default async (videoPath: string, Key: string) => {
+export default async (videoPath: string, key: string) => {
+  console.log("generate thumbnail");
+  const dir = key;
+  fs.mkdirSync(dir);
   new Promise((resolve, reject) => {
     try {
       ffmpeg(videoPath)
@@ -13,29 +14,15 @@ export default async (videoPath: string, Key: string) => {
         .on("end", function () {
           console.log("Screenshots taken");
         })
-        .screenshots({})
-        .pipe(uploadFromStream())
+        .screenshots({ count: 1, folder: key })
         .on("end", (data: any) => {
           console.log(data);
-          console.log("MEREEEEEEEEEEEEEEEEEE jen ai marre");
+          fs.createReadStream(`${key}/tn.png`).pipe(
+            fs.createWriteStream(`images/${key}.jpg`)
+          );
+          console.log("FINISH GENNERATE THYMBNAIL");
           resolve();
         });
-      const { name } = path.parse(Key);
-      const newKey = name + ".png";
-      const uploadParams = {
-        Bucket: "streamio/test",
-        Key: newKey,
-      };
-
-      function uploadFromStream() {
-        const pass = new stream.PassThrough();
-        console.log({ uploadParams });
-        s3.upload({ Body: pass, ...uploadParams }, (err: any, data: any) => {
-          if (err) return console.log("MMMMMMMMMMMMMMMERDE", err);
-          console.log(data, "MMMMMMMMMMMMMMMMMMMMERDEIEIIEIRIRIRI");
-        });
-        return pass;
-      }
     } catch (err) {
       reject(err);
     }
