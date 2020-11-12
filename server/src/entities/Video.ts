@@ -30,6 +30,11 @@ export class Video extends BaseEntity {
   isConvertionPending!: boolean;
 
   @Field()
+  @Column()
+  @Column({ type: "boolean", default: false })
+  isAlreadyConvert!: boolean;
+
+  @Field()
   @Column({ type: "int", default: 0 })
   points!: number;
 

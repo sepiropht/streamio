@@ -52,47 +52,36 @@ const main = async () => {
     console.log("processVideo", req.query);
     const { id, key } = req.query;
     const video = await Video.findOne(id);
-    console.log({ video });
+
+    if (video?.isAlreadyConvert) {
+      return res.json({ isAlreadyConvert: true });
+    }
     if (video?.isConvertionPending) {
       return res.json({ processing: true });
     }
     const changeStatus = async (
       isPending: boolean,
-      oldK: string,
-      newK: string
+      key: string,
+      isAlreadyConvert: boolean
     ) => {
       console.log("before status");
       await getConnection()
         .createQueryBuilder()
         .update(Video)
-        .set({ isConvertionPending: isPending, key: newK })
+        .set({ isConvertionPending: isPending, isAlreadyConvert })
         .where("key = :key", {
-          key: oldK,
+          key,
         })
         .returning("*")
         .execute();
 
       console.log("after status");
     };
-    console.log({ video }, "YYYYYYYYYYYYYYYYYYYYYYYYY");
-    await changeStatus(true, key, key);
-    console.log("before send");
+    await changeStatus(true, key, false);
     res.json({ processing: true });
-    console.log("after send");
-    console.log("beafroe convert send");
 
-    const { oldKey, newKey } = await convert(key);
-    console.log("RETURNE CONVERT", { oldKey, newKey });
-    console.log("after convert");
-
-    try {
-      await changeStatus(false, oldKey, newKey);
-    } catch (err) {
-      console.log(err);
-    }
-    console.log({ key });
-
-    //return res.json({ processing: video?.isConvertionPending });
+    await convert(key);
+    await changeStatus(false, key, true);
   });
   app.get("/getVideo", async (req: any, res: any) => {
     console.log("getVideo");
@@ -102,13 +91,12 @@ const main = async () => {
       Key: key,
     };
     const video = await Video.findOne(id);
-    console.log({ video });
     if (video?.isConvertionPending) {
       return res.json({ processing: true });
     }
     s3.getObject(uploadParams).createReadStream().pipe(res);
   });
-  app.use("/static", express.static(__dirname + "/images"));
+  app.use(express.static("images"));
   app.use(
     session({
       name: COOKIE_NAME,

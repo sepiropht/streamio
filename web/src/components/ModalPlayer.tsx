@@ -14,8 +14,9 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
 }) => {
   useEffect(() => {
     const videoDomElement = document.querySelector("video");
-    console.log({ videoUrl });
-    console.log(videoDomElement?.src);
+    console.log("modal", { videoUrl });
+    console.log("video dome element", videoDomElement?.src);
+    if (videoDomElement && videoUrl.length) videoDomElement.src = videoUrl;
     if (isVisible && videoUrl === videoDomElement?.currentSrc) {
       videoDomElement?.play();
     } else {

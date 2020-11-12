@@ -20,7 +20,6 @@ export default async (videoPath: string, key: string) => {
           fs.createReadStream(`${key}/tn.png`).pipe(
             fs.createWriteStream(`images/${key}.jpg`)
           );
-          console.log("FINISH GENNERATE THYMBNAIL");
           resolve();
         });
     } catch (err) {
