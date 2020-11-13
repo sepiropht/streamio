@@ -4,9 +4,11 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  ManyToOne,
+  UpdateDateColumn,
   BaseEntity,
 } from "typeorm";
-// import { User } from "./User";
+import { User } from "./User";
 // import { Updoot } from "./Updoot";
 
 @ObjectType()
@@ -45,13 +47,9 @@ export class Video extends BaseEntity {
   // @Field(() => Int, { nullable: true })
   // voteStatus: number | null; // 1 or -1 or null
 
-  // @Field()
-  // @Column()
-  // creatorId: number;
-
-  // @Field()
-  // @ManyToOne(() => User, (user) => user.posts)
-  // creator: User;
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.posts)
+  creator: User;
 
   // @OneToMany(() => Updoot, (updoot) => updoot.post)
   // updoots: Updoot[];
@@ -59,4 +57,12 @@ export class Video extends BaseEntity {
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
+
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
