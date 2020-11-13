@@ -52,7 +52,7 @@ const main = async () => {
     console.log("processVideo", req.query);
     const { id, key } = req.query;
     const video = await Video.findOne(id);
-
+    console.log(video?.isAlreadyConvert, video?.isConvertionPending);
     if (video?.isAlreadyConvert) {
       return res.json({ isAlreadyConvert: true });
     }

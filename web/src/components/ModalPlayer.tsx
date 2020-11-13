@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/core";
 import { Icon } from "@chakra-ui/core";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface ModalPlayerProps {
   videoUrl: string;
@@ -12,15 +12,22 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
   videoUrl,
   close,
 }) => {
+  const videoDomElement = useRef<HTMLVideoElement>(null);
   useEffect(() => {
-    const videoDomElement = document.querySelector("video");
-    console.log("modal", { videoUrl });
-    console.log("video dome element", videoDomElement?.src);
-    if (videoDomElement && videoUrl.length) videoDomElement.src = videoUrl;
-    if (isVisible && videoUrl === videoDomElement?.currentSrc) {
-      videoDomElement?.play();
+    if (
+      videoDomElement &&
+      !videoDomElement.current?.currentSrc.length &&
+      videoUrl.length
+    ) {
+      const source = document.createElement("source");
+      source.setAttribute("src", videoUrl);
+      source.setAttribute("type", "video/mp4");
+      videoDomElement.current?.appendChild(source);
+    }
+    if (isVisible) {
+      videoDomElement?.current?.play();
     } else {
-      videoDomElement?.pause();
+      videoDomElement?.current?.pause();
     }
   }, [isVisible]);
   return (
@@ -49,9 +56,7 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
           onClick={() => close(false)}
         ></Icon>
       </Box>
-      <video controls autoPlay loop>
-        <source src={videoUrl} type="video/mp4"></source>
-      </video>
+      <video ref={videoDomElement} controls autoPlay loop></video>
     </Flex>
   );
 };

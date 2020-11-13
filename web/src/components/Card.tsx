@@ -29,10 +29,10 @@ export const Card: React.FC<CardProps> = ({
   const [isVisible, showModal] = useState(false);
   const [isCardLoad, setCardLoader] = useState(isCardLoaded);
   const [video, setVideoUrl] = useState("");
+
   useEffect(() => {
-    async function waitUntil() {
+    async function pollingServer() {
       return await new Promise((resolve) => {
-        console.log("polling", { id, Key });
         const interval = setInterval(async () => {
           const { data } = await axios.get(
             `http://localhost:4000/processVideo/?id=${id}&key=${Key}`
@@ -40,13 +40,13 @@ export const Card: React.FC<CardProps> = ({
           if (data.isAlreadyConvert) {
             setCardLoader(true);
             setVideoUrl(videoUrl);
-            resolve("foo");
+            resolve();
             clearInterval(interval);
           }
         }, 1000);
       });
     }
-    waitUntil();
+    pollingServer();
   }, []);
 
   return (

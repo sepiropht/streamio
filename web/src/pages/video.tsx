@@ -41,10 +41,7 @@ const IndexPage = () => {
         Key,
         Body: file,
       };
-      if (data) {
-        setVideo([...videos, { ...data?.uploadVideo }]);
-        setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
-      }
+
       s3.upload(uploadParams, async (err: any, res: any) => {
         if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
         console.log(res);
@@ -52,6 +49,11 @@ const IndexPage = () => {
           `http://localhost:4000/processVideo/?id=${data?.uploadVideo.id}&key=${Key}`
         );
         console.log(r);
+        // Wait the end of upload to s3 before rendering the card
+        if (data) {
+          setVideo([...videos, { ...data?.uploadVideo }]);
+          setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
+        }
       });
     }
   }
