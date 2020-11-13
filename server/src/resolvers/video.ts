@@ -40,10 +40,10 @@ export class VideoResolver {
   }
 
   @Mutation(() => Video)
-  //@UseMiddleware(isAuth)
+  @UseMiddleware(isAuth)
   async uploadVideo(
     @Arg("input") input: VideoInput,
-    @Ctx() {}: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<Video> {
     console.log("FFFFFFFFFFFI", input);
     const { title, Key, size } = input;
@@ -52,6 +52,7 @@ export class VideoResolver {
     return Video.create({
       title: name,
       key: Key,
+      creatorId: req.session.userId,
       size,
     }).save();
   }
@@ -82,19 +83,16 @@ export class VideoResolver {
   @UseMiddleware(isAuth)
   async deleteVideo(
     @Arg("id", () => Int) id: number,
-    @Ctx() {}: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<boolean> {
     // not cascade way
-    // const Video = await Video.findOne(id);
-    // if (!Video) {
-    //   return false;
-    // }
-    // if (Video.creatorId !== req.session.userId) {
-    //   throw new Error("not authorized");
-    // }
-
-    // await Updoot.delete({ VideoId: id });
-    // await Video.delete({ id });
+    const video = await Video.findOne(id);
+    if (!video) {
+      return false;
+    }
+    if (video.creatorId !== req.session.userId) {
+      throw new Error("not authorized");
+    }
 
     await Video.delete({ id });
     return true;

@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Post } from "./Post";
+import { Video } from "./Video";
 import { Updoot } from "./Updoot";
 
 @ObjectType()
@@ -31,6 +32,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
+
+  @OneToMany(() => Video, (video) => video.creator)
+  videos: Video[];
 
   @OneToMany(() => Updoot, (updoot) => updoot.user)
   updoots: Updoot[];
