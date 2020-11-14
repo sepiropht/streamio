@@ -12,12 +12,22 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/core";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
+import { useVideosQuery } from "../generated/graphql";
+import { unionBy } from "lodash";
 
 const IndexPage = () => {
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
     []
   );
+  const { data, error, loading, fetchMore, variables } = useVideosQuery({
+    variables: {
+      limit: 15,
+      cursor: null,
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
   const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
   const [uploadVideo] = useUploadVideoMutation();
 
@@ -58,21 +68,26 @@ const IndexPage = () => {
     }
   }
   console.log(videos);
-  const ListVideos = videos.map(({ id, title, points, key }) => {
-    console.log(key);
-    return (
-      <Card
-        id={id}
-        Key={key}
-        src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
-        views={points}
-        link={`http:///localhost:4000/${key}`}
-        videoUrl={`http://localhost:4000/getVideo/?id=${id}&key=${key}`}
-        title={title}
-        isCardLoaded={false}
-      ></Card>
-    );
-  });
+
+  console.log("data FROM SERVER", data);
+
+  const ListVideos = unionBy(videos, data?.videos?.videos, "id").map(
+    ({ id, title, points, key }) => {
+      return (
+        <Card
+          id={id}
+          key={key}
+          Key={key}
+          src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
+          views={points}
+          link={`http:///localhost:4000/${key}`}
+          videoUrl={`http://localhost:4000/getVideo/?id=${id}&key=${key}`}
+          title={title}
+          isCardLoaded={false}
+        ></Card>
+      );
+    }
+  );
   return (
     <Layout>
       <Flex bg="white" padding="10px" marginBottom="20px">

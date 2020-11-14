@@ -2,20 +2,20 @@ import {
   Arg,
   Ctx,
   Field,
-  //FieldResolver,
+  FieldResolver,
   InputType,
   Int,
   Mutation,
-  //ObjectType,
+  ObjectType,
   Query,
   Resolver,
-  //Root,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Video } from "../entities/Video";
 // import { Updoot } from "../entities/Updoot";
-// import { User } from "../entities/User";
+import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import path from "path";
@@ -31,6 +31,13 @@ class VideoInput {
   @Field()
   size: number;
 }
+@ObjectType()
+class PaginatedVideos {
+  @Field(() => [Video])
+  videos: Video[];
+  @Field()
+  hasMore: boolean;
+}
 
 @Resolver(Video)
 export class VideoResolver {
@@ -38,7 +45,10 @@ export class VideoResolver {
   Video(@Arg("id", () => Int) id: number): Promise<Video | undefined> {
     return Video.findOne(id);
   }
-
+  @FieldResolver(() => User)
+  creator(@Root() video: Video, @Ctx() { userLoader }: MyContext) {
+    return userLoader.load(video.creatorId);
+  }
   @Mutation(() => Video)
   @UseMiddleware(isAuth)
   async uploadVideo(
@@ -96,5 +106,36 @@ export class VideoResolver {
 
     await Video.delete({ id });
     return true;
+  }
+  @Query(() => PaginatedVideos)
+  async videos(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<PaginatedVideos> {
+    // 20 -> 21
+    const realLimit = Math.min(50, limit);
+    const reaLimitPlusOne = realLimit + 1;
+
+    const replacements: any[] = [reaLimitPlusOne];
+
+    if (cursor) {
+      replacements.push(new Date(parseInt(cursor)));
+    }
+
+    const videos = await getConnection().query(
+      `
+    select p.*
+    from video p
+    ${cursor ? `where p."createdAt" < $2` : ""}
+    order by p."createdAt" DESC
+    limit $1
+    `,
+      replacements
+    );
+
+    return {
+      videos: videos.slice(0, realLimit),
+      hasMore: videos.length === reaLimitPlusOne,
+    };
   }
 }

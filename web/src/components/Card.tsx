@@ -129,6 +129,7 @@ export const Card: React.FC<CardProps> = ({
             padding="2px 4px"
             paddingLeft="0"
             value={title}
+            onChange={(e: any) => console.log(e.target.text)}
             fontWeight={600}
             lineHeight={1.5}
             display="flex"
