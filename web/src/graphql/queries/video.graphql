@@ -1,0 +1,11 @@
+query Video($id: Int!) {
+  Video(id: $id) {
+    id
+    title
+    points
+    key
+    creator {
+      id
+    }
+  }
+}

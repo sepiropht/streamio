@@ -18,6 +18,7 @@ export type Query = {
   post?: Maybe<Post>;
   me?: Maybe<User>;
   Video?: Maybe<Video>;
+  videos: PaginatedVideos;
 };
 
 
@@ -34,6 +35,12 @@ export type QueryPostArgs = {
 
 export type QueryVideoArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryVideosArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type PaginatedPosts = {
@@ -71,9 +78,19 @@ export type Video = {
   title: Scalars['String'];
   key: Scalars['String'];
   isConvertionPending: Scalars['Boolean'];
+  isAlreadyConvert: Scalars['Boolean'];
   points: Scalars['Float'];
   size: Scalars['Float'];
+  creator: User;
   createdAt: Scalars['String'];
+  creatorId: Scalars['Float'];
+  updatedAt: Scalars['String'];
+};
+
+export type PaginatedVideos = {
+  __typename?: 'PaginatedVideos';
+  videos: Array<Video>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Mutation = {
@@ -376,6 +393,41 @@ export type PostsQuery = (
     & { posts: Array<(
       { __typename?: 'Post' }
       & PostSnippetFragment
+    )> }
+  ) }
+);
+
+export type VideoQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type VideoQuery = (
+  { __typename?: 'Query' }
+  & { Video?: Maybe<(
+    { __typename?: 'Video' }
+    & Pick<Video, 'id' | 'title' | 'points' | 'key'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'id'>
+    ) }
+  )> }
+);
+
+export type VideosQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type VideosQuery = (
+  { __typename?: 'Query' }
+  & { videos: (
+    { __typename?: 'PaginatedVideos' }
+    & Pick<PaginatedVideos, 'hasMore'>
+    & { videos: Array<(
+      { __typename?: 'Video' }
+      & Pick<Video, 'id' | 'key' | 'title'>
     )> }
   ) }
 );
@@ -858,3 +910,81 @@ export function usePostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Post
 export type PostsQueryHookResult = ReturnType<typeof usePostsQuery>;
 export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
 export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;
+export const VideoDocument = gql`
+    query Video($id: Int!) {
+  Video(id: $id) {
+    id
+    title
+    points
+    key
+    creator {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useVideoQuery__
+ *
+ * To run a query within a React component, call `useVideoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideoQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useVideoQuery(baseOptions?: Apollo.QueryHookOptions<VideoQuery, VideoQueryVariables>) {
+        return Apollo.useQuery<VideoQuery, VideoQueryVariables>(VideoDocument, baseOptions);
+      }
+export function useVideoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideoQuery, VideoQueryVariables>) {
+          return Apollo.useLazyQuery<VideoQuery, VideoQueryVariables>(VideoDocument, baseOptions);
+        }
+export type VideoQueryHookResult = ReturnType<typeof useVideoQuery>;
+export type VideoLazyQueryHookResult = ReturnType<typeof useVideoLazyQuery>;
+export type VideoQueryResult = Apollo.QueryResult<VideoQuery, VideoQueryVariables>;
+export const VideosDocument = gql`
+    query Videos($limit: Int!, $cursor: String) {
+  videos(limit: $limit, cursor: $cursor) {
+    hasMore
+    videos {
+      id
+      key
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useVideosQuery__
+ *
+ * To run a query within a React component, call `useVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideosQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useVideosQuery(baseOptions?: Apollo.QueryHookOptions<VideosQuery, VideosQueryVariables>) {
+        return Apollo.useQuery<VideosQuery, VideosQueryVariables>(VideosDocument, baseOptions);
+      }
+export function useVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideosQuery, VideosQueryVariables>) {
+          return Apollo.useLazyQuery<VideosQuery, VideosQueryVariables>(VideosDocument, baseOptions);
+        }
+export type VideosQueryHookResult = ReturnType<typeof useVideosQuery>;
+export type VideosLazyQueryHookResult = ReturnType<typeof useVideosLazyQuery>;
+export type VideosQueryResult = Apollo.QueryResult<VideosQuery, VideosQueryVariables>;

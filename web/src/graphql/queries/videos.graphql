@@ -1,0 +1,10 @@
+query Videos($limit: Int!, $cursor: String) {
+  videos(limit: $limit, cursor: $cursor) {
+    hasMore
+    videos {
+      id
+      key
+      title
+    }
+  }
+}
