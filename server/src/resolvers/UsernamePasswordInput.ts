@@ -1,4 +1,4 @@
-import { InputType, Field } from "type-graphql";
+import { InputType, Field, Int } from "type-graphql";
 @InputType()
 export class UsernamePasswordInput {
   @Field()
@@ -7,4 +7,6 @@ export class UsernamePasswordInput {
   username: string;
   @Field()
   password: string;
+  @Field(() => [Int])
+  videosId: number[];
 }

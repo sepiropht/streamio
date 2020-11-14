@@ -9,11 +9,15 @@ import { useRouter } from "next/router";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { withApollo } from "../utils/withApollo";
+import useLocalStorage from "../utils/useLocalStorage";
+import { Video } from "../interfaces/index";
 
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
+  const [videoFromLocalStorage] = useLocalStorage("data", []);
+  const videosId = videoFromLocalStorage.map((video: Video) => video.id);
   const [register] = useRegisterMutation();
   return (
     <Wrapper variant="small">
@@ -21,7 +25,7 @@ const Register: React.FC<registerProps> = ({}) => {
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await register({
-            variables: { options: values },
+            variables: { options: { ...values, videosId } },
             update: (cache, { data }) => {
               cache.writeQuery<MeQuery>({
                 query: MeDocument,

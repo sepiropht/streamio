@@ -192,6 +192,7 @@ export type UsernamePasswordInput = {
   email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
+  videosId: Array<Scalars['Int']>;
 };
 
 export type VideoInput = {
