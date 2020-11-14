@@ -50,7 +50,6 @@ export class VideoResolver {
     return userLoader.load(video.creatorId);
   }
   @Mutation(() => Video)
-  @UseMiddleware(isAuth)
   async uploadVideo(
     @Arg("input") input: VideoInput,
     @Ctx() { req }: MyContext
@@ -62,13 +61,12 @@ export class VideoResolver {
     return Video.create({
       title: name,
       key: Key,
-      creatorId: req.session.userId,
+      creatorId: req.session.userId || 1,
       size,
     }).save();
   }
 
   @Mutation(() => Video, { nullable: true })
-  @UseMiddleware(isAuth)
   async updateVideo(
     @Arg("id", () => Int) id: number,
     @Arg("title") title: string,
@@ -81,7 +79,7 @@ export class VideoResolver {
       .set({ title, key })
       .where('id = :id and "creatorId" = :creatorId', {
         id,
-        creatorId: req.session.userId,
+        creatorId: req.session.userId || 1,
       })
       .returning("*")
       .execute();
@@ -108,7 +106,9 @@ export class VideoResolver {
     return true;
   }
   @Query(() => PaginatedVideos)
+  @UseMiddleware(isAuth)
   async videos(
+    @Ctx() { req }: MyContext,
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
   ): Promise<PaginatedVideos> {
@@ -126,7 +126,8 @@ export class VideoResolver {
       `
     select p.*
     from video p
-    ${cursor ? `where p."createdAt" < $2` : ""}
+    ${cursor ? `where p."createdAt" < $2 and` : ""}
+    where "creatorId" = ${req.session.userId}
     order by p."createdAt" DESC
     limit $1
     `,

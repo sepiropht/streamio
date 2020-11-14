@@ -427,7 +427,7 @@ export type VideosQuery = (
     & Pick<PaginatedVideos, 'hasMore'>
     & { videos: Array<(
       { __typename?: 'Video' }
-      & Pick<Video, 'id' | 'key' | 'title'>
+      & Pick<Video, 'id' | 'key' | 'title' | 'points'>
     )> }
   ) }
 );
@@ -957,6 +957,7 @@ export const VideosDocument = gql`
       id
       key
       title
+      points
     }
   }
 }

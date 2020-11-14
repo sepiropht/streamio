@@ -69,9 +69,7 @@ const IndexPage = () => {
   }
   console.log(videos);
 
-  console.log("data FROM SERVER", data);
-
-  const ListVideos = unionBy(videos, data?.videos?.videos, "id").map(
+  const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
     ({ id, title, points, key }) => {
       return (
         <Card
