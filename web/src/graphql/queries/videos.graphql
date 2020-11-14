@@ -5,6 +5,7 @@ query Videos($limit: Int!, $cursor: String) {
       id
       key
       title
+      points
     }
   }
 }
