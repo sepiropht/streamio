@@ -67,7 +67,6 @@ const IndexPage = () => {
       });
     }
   }
-  console.log(videos);
 
   const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
     ({ id, title, points, key }) => {

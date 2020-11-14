@@ -18,6 +18,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { getConnection } from "typeorm";
+import { Video } from "../entities/Video";
 
 @ObjectType()
 class FieldError {
@@ -156,7 +157,7 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(options.password);
-    let user;
+    let user: any;
     try {
       // User.create({}).save()
       const result = await getConnection()
@@ -190,7 +191,19 @@ export class UserResolver {
     // this will set a cookie on the user
     // keep them logged in
     req.session.userId = user.id;
-
+    options.videosId.forEach(
+      async (id) =>
+        await getConnection()
+          .createQueryBuilder()
+          .update(Video)
+          .set({ creatorId: user.id })
+          .where('id = :id and "creatorId" = :creatorId', {
+            id,
+            creatorId: 1,
+          })
+          .returning("*")
+          .execute()
+    );
     return { user };
   }
 
