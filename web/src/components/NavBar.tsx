@@ -1,15 +1,17 @@
-import React from "react";
+import { useState } from "react";
 import { Box, Link, Flex, Button, Heading } from "@chakra-ui/core";
 import NextLink from "next/link";
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import { useRouter } from "next/router";
 import { useApolloClient } from "@apollo/client";
-
+import { MenuHeader } from "./NavMenu";
+import { NavMenu } from "./NavMenu";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const router = useRouter();
+  const [isHover, setHover] = useState(false);
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const apolloClient = useApolloClient();
   const { data, loading } = useMeQuery({
@@ -25,10 +27,26 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <>
         <NextLink href="/login">
-          <Link mr={2}>login</Link>
+          <Button
+            as={Link}
+            bg="rgb(237, 255, 244)"
+            borderColor="rgba(25, 150, 98, 0.26)"
+            borderStyle="solide"
+            borderRadius="3px"
+            borderWidth="1px"
+            size="sm"
+            color="rgb(18, 119, 18)"
+            boxShadow="0 2px 2px rgba(15,148,33,.1)"
+            mr={4}
+          >
+            Upgrade
+          </Button>
         </NextLink>
+
         <NextLink href="/register">
-          <Link>register</Link>
+          <Button as={Link} bg="#0f90fa" color="white" size="sm">
+            Sign Up
+          </Button>
         </NextLink>
       </>
     );
@@ -44,7 +62,8 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             borderStyle="solide"
             borderRadius="3px"
             borderWidth="1px"
-            padding="2px 14px 2px 14px"
+            variant="ghost"
+            size="sm"
             color="rgb(18, 119, 18)"
             boxShadow="0 2px 2px rgba(15,148,33,.1)"
             mr={4}
@@ -52,17 +71,17 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             Upgrade
           </Button>
         </NextLink>
-        <Box mr={2}>{data.me.username}</Box>
+        <NavMenu name={data.me.username}></NavMenu>
         {/* <Button
-          onClick={async () => {
-            await logout();
-            await apolloClient.resetStore();
-          }}
-          isLoading={logoutFetching}
-          variant="link"
-        >
-          logout
-        </Button> */}
+        onClick={async () => {
+          await logout();
+          await apolloClient.resetStore();
+        }}
+        isLoading={logoutFetching}
+        variant="link"
+      >
+        logout
+      </Button> */}
       </Flex>
     );
   }
