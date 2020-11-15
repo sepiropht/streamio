@@ -31,6 +31,7 @@ export const Card: React.FC<CardProps> = ({
   const [video, setVideoUrl] = useState("");
 
   useEffect(() => {
+    console.log({ link });
     async function pollingServer() {
       return await new Promise((resolve) => {
         const interval = setInterval(async () => {
@@ -141,7 +142,7 @@ export const Card: React.FC<CardProps> = ({
             marginBottom="7px"
           ></Textarea>
           <Flex alignItems="start" justifyContent="flex-start">
-            <NextLink href="/">
+            <NextLink href={link}>
               <Box color="#007bff">{link}</Box>
             </NextLink>
             <Button
