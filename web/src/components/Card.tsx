@@ -36,7 +36,7 @@ export const Card: React.FC<CardProps> = ({
       return await new Promise((resolve) => {
         const interval = setInterval(async () => {
           const { data } = await axios.get(
-            `http://localhost:4000/processVideo/?id=${id}&key=${Key}`
+            `http://localhost:4000/processVideo/?key=${Key.slice(0, 7)}`
           );
           if (data.isAlreadyConvert) {
             setCardLoader(true);
@@ -143,7 +143,10 @@ export const Card: React.FC<CardProps> = ({
           ></Textarea>
           <Flex alignItems="start" justifyContent="flex-start">
             <NextLink href={link}>
-              <Box color="#007bff">{link}</Box>
+              <Box
+                cursor="pointer"
+                color="#007bff"
+              >{`https://streamio.com${link}`}</Box>
             </NextLink>
             <Button
               size="xs"

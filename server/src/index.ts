@@ -23,6 +23,7 @@ import { createUpdootLoader } from "./utils/createUpdootLoader";
 import { VideoResolver } from "./resolvers/video";
 import convert from "./utils/convert";
 import s3 from "./utils/aws";
+//import getFromSocialMedia from "./utils/getVideoFromSocialMedia";
 //import streamify from "./utils/streamify";
 //import fs from "fs";
 
@@ -50,8 +51,13 @@ const main = async () => {
   );
   app.get("/processVideo", async (req: any, res: any) => {
     console.log("processVideo", req.query);
-    const { id, key } = req.query;
-    const video = await Video.findOne(id);
+    const { key } = req.query;
+    const video = await getConnection()
+      .getRepository(Video)
+      .createQueryBuilder("video")
+      .where("video.key like :key", { key: `%${key}%` })
+      .getOne();
+
     console.log(video?.isAlreadyConvert, video?.isConvertionPending);
     if (video?.isAlreadyConvert) {
       return res.json({ isAlreadyConvert: true });
@@ -85,17 +91,33 @@ const main = async () => {
   });
   app.get("/getVideo", async (req: any, res: any) => {
     console.log("getVideo");
-    const { id, key } = req.query;
-    const uploadParams = {
-      Bucket: "streamio/test",
-      Key: key,
-    };
-    const video = await Video.findOne(id);
-    if (video?.isConvertionPending) {
-      return res.json({ processing: true });
+    let { key } = req.query;
+    console.log({ key });
+    if (key.length) {
+      const video = await getConnection()
+        .getRepository(Video)
+        .createQueryBuilder("video")
+        .where("video.key like :key", { key: `%${key}%` })
+        .getOne();
+      console.log({ video });
+      // const video = await Video.findOne(id);
+      if (video?.isConvertionPending) {
+        return res.json({ processing: true });
+      }
+      if (video) {
+        const uploadParams = {
+          Bucket: "streamio/test",
+          Key: video.key,
+        };
+
+        s3.getObject(uploadParams).createReadStream().pipe(res);
+      }
     }
-    s3.getObject(uploadParams).createReadStream().pipe(res);
   });
+  // app.get("/socialUrl", async (req: any, res: any) => {
+  //   const { socialUrl } = req.query;
+  //   //getFromSocialMedia(url)
+  // });
   app.use(express.static("images"));
   app.use(
     session({

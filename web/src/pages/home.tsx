@@ -77,8 +77,8 @@ const Home = () => {
           Key={key}
           src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
           views={points}
-          link={`/${key}`}
-          videoUrl={`http://localhost:4000/getVideo/?id=${id}&key=${key}`}
+          link={`/${key.slice(0, 7)}${id}`}
+          videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
           title={title}
           isCardLoaded={false}
         ></Card>
