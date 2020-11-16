@@ -64,6 +64,7 @@ export const NavMenu: React.FC<NavMenuProps> = ({ name }) => {
                 color="black"
                 onClick={async () => {
                   await logout();
+                  localStorage.clear();
                   await apolloClient.resetStore();
                 }}
                 isLoading={logoutFetching}

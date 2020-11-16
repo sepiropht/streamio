@@ -12,11 +12,10 @@ export const IndexPage = ({}) => {
   const { data, loading } = useMeQuery({
     skip: isServer(),
   });
-
   const router = useRouter();
   if (data?.me && !isServer()) {
     router.push("/home", "/", { shallow: true });
-  } else if (!isServer) {
+  } else if (!isServer()) {
     router.push("/landing", "/", { shallow: true });
   }
   return null;

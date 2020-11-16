@@ -8,10 +8,12 @@ import { Box, Link, Flex, Button, Heading } from "@chakra-ui/core";
 // import { NavMenu } from "./NavMenu";
 interface LandingProps {}
 
-export const Landing: React.FC<LandingProps> = ({}) => {
+const Landing: React.FC<LandingProps> = ({}) => {
   return (
     <Box>
       <h1>Landing page !</h1>
     </Box>
   );
 };
+
+export default Landing;
