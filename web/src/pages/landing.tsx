@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Video } from "../interfaces";
 import { useUploadVideoMutation } from "../generated/graphql";
 import { withApollo } from "../utils/withApollo";
-
+import { GiSpeedometer } from "react-icons/gi";
 interface LandingProps {}
 
 const Landing: React.FC<LandingProps> = ({}) => {
@@ -123,7 +123,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
             cursor="pointer"
             flex="1 1 0%"
           >
-            <NextLink href="/features">
+            <NextLink href="/#features">
               <Box
                 font-size="16px"
                 color="#2c2c2c"
@@ -246,8 +246,76 @@ const Landing: React.FC<LandingProps> = ({}) => {
           </FormControl>
         </Flex>
       </Box>
+      <Box
+        width="100vw"
+        maxWidth="960px"
+        margin=" 0 auto"
+        paddingBottom="0"
+        position="relative"
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="center"
+      >
+        <Box
+          id="features"
+          width="100vw"
+          margin="30px auto"
+          color="#2c2c2c"
+          padding="20px"
+          fontSize="30px"
+          display="flex"
+          marginTop="50px"
+          textAlign="center"
+          justifyContent="center"
+          fontWeight={600}
+          borderBottom="1px solid #e7e7e7"
+        >
+          All of the features you need. None of the complexity you don't.
+        </Box>
+        <Feature
+          title="Blazing Fast"
+          description="One of the fastest video uploader on the web. Don't take our word for it, try it."
+        >
+          <GiSpeedometer></GiSpeedometer>
+        </Feature>
+        <Feature
+          title="Frustation free"
+          description="Simple video URLs and embed options make sharing videos a snap"
+        ></Feature>
+      </Box>
     </Box>
   );
 };
+interface FeatureProps {
+  title: string;
+  description: string;
+}
+const Feature: React.FC<FeatureProps> = ({ children, title, description }) => (
+  <Box
+    display="flex"
+    margin="40px"
+    maxWidth="380px"
+    width="100vw"
+    alignItems="center"
+  >
+    <Box flex="0 0 50px" height="50px;" marginRight="30px;">
+      {children}
+    </Box>
+    <Box>
+      <Box
+        fontWeight={500}
+        line-height={1.2}
+        color="#2c2c2c"
+        marginBottom="12px"
+        fontSize="1.75rem"
+      >
+        <h3>{title}</h3>
+      </Box>
+      <Box color=" #748490" fontSize="16px" margin="0" padding="0">
+        <p>{description}</p>
+      </Box>
+    </Box>
+  </Box>
+);
 
 export default withApollo({ ssr: false })(Landing);
