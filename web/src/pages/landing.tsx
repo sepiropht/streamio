@@ -9,7 +9,6 @@ import {
   FormControl,
   Input,
 } from "@chakra-ui/core";
-import { FaCloudUploadAlt } from "react-icons/fa";
 import NextLink from "next/link";
 // import { isServer } from "../utils/isServer";
 // import { useRouter } from "next/router";
@@ -96,6 +95,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           display="flex"
           justifyContent="space-between"
           border="none"
+          flexWrap="wrap"
           line-height="44px"
           flex-direction="row"
           width="100%"
@@ -110,7 +110,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
               color="#2c2c2c"
               margin="0 10px"
               transition="color .2s cubic-bezier(.4,0,.2,1)"
-              href="https://Streamario.com"
+              href="https://streamario.com"
             >
               Streamario
             </Link>
@@ -128,6 +128,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
                 font-size="16px"
                 color="#2c2c2c"
                 margin="0 10px"
+                display={["none", "block", "block", "block"]}
                 transition="color .2s cubic-bezier(.4,0,.2,1)"
               >
                 Features
@@ -146,7 +147,9 @@ const Landing: React.FC<LandingProps> = ({}) => {
             lineHeight="44px"
           >
             <NextLink href="/login">
-              <Box margin="0 10px">Log In</Box>
+              <Box display={["none", "none", "block", "block"]} margin="0 10px">
+                Log In
+              </Box>
             </NextLink>
             <NextLink href="/register">
               <Button bg="#0f90fa" color="white" margin="0 10px">
@@ -169,7 +172,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           maxWidth="600px"
           marginBottom="50px"
           lineHeight="1.1"
-          fontSize="70px"
+          fontSize="3rem"
           fontWeight={700}
           fontFamily="'Roboto',Helvetica,sans-serif"
           paddingTop="50px"
@@ -185,9 +188,10 @@ const Landing: React.FC<LandingProps> = ({}) => {
         </Box>
         <Flex
           bg="white"
-          padding="30px 25px"
+          padding={["30px 44px", "30px 44px", "30 25px", "30px 25px"]}
           marginTop="70px"
           marginBottom="90px"
+          flexDirection={["column", "row", "row", "row"]}
         >
           <FormControl display="none" bg="white">
             <input
@@ -209,6 +213,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
             alignItems="center"
             font-size="16px"
             minW="172px"
+            margin="20px"
             border="none"
             position="relative"
             letterSpacing="0"
@@ -226,7 +231,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
             Upload a video File
           </Button>
           <FormControl
-            marginLeft="20px"
+            margin="20px"
             fontWeight="extrabold"
             padding="5px"
             bg="transparent"
