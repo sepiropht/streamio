@@ -7,6 +7,7 @@ import {
   Flex,
   Button,
   FormControl,
+  Input,
 } from "@chakra-ui/core";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import NextLink from "next/link";
@@ -155,64 +156,91 @@ const Landing: React.FC<LandingProps> = ({}) => {
           </ListItem>
         </List>
       </Box>
-      <Flex bg="white" padding="10px" marginBottom="20px">
-        <FormControl display="none" bg="white">
-          <input
-            className="upload-input"
-            type="file"
-            name="file"
-            placeholder="paste video url"
-            onChange={onChange}
-          />
-        </FormControl>
-        <Button
-          height="36px"
-          fontWeight={600}
-          bg="#0f90fa"
-          color="white"
-          line-height="24px"
-          display="flex"
-          justifyContent="space-around"
-          alignItems="center"
-          font-size="16px"
-          minW="172px"
-          border="none"
-          position="relative"
-          letterSpacing="0"
-          transition="background-color .2s"
-          onClick={() => {
-            const clickEvent = new MouseEvent("click", {
-              view: window,
-              bubbles: true,
-              cancelable: false,
-            });
-            const input = document.querySelector(".upload-input");
-            input?.dispatchEvent(clickEvent);
-          }}
+      <Box
+        minHeight="calc(100vh - 132px)"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Box
+          color="#2c2c2c"
+          textAlign="center"
+          maxWidth="600px"
+          marginBottom="50px"
+          lineHeight="1.1"
+          fontSize="70px"
+          fontWeight={700}
+          fontFamily="'Roboto',Helvetica,sans-serif"
+          paddingTop="50px"
         >
-          <Box verticalAlign="center" fontSize={23}>
-            <FaCloudUploadAlt></FaCloudUploadAlt>
-          </Box>
-          Upload Video
-        </Button>
-        <FormControl
-          marginLeft="20px"
-          fontWeight="extrabold"
-          textAlign="left"
-          padding="5px"
-          bg="transparent"
-          borderBottom="1px solid #ddd;"
-          width={["100%", "100%", "100%", "100%"]}
-          fontSize="16px"
+          <h1>
+            Video hosting for
+            <span style={{ textDecoration: "underline" }}> everyone.</span>
+          </h1>
+        </Box>
+        <Box maxWidth="500px" color="#555" fontSize="18px" textAlign="center">
+          Streamario is one of the easiest way to upload, edit, and share video
+          — it's free to use and there's no signup required.
+        </Box>
+        <Flex
+          bg="white"
+          padding="30px 25px"
+          marginTop="70px"
+          marginBottom="90px"
         >
-          <input
-            type="text"
-            onPaste={() => console.log("yeah")}
-            style={{ width: "100%" }}
-            placeholder="Paste a video Url"
-          ></input>
-        </FormControl>
-      </Flex>
+          <FormControl display="none" bg="white">
+            <input
+              className="upload-input"
+              type="file"
+              name="file"
+              placeholder="paste video url"
+              onChange={onChange}
+            />
+          </FormControl>
+          <Button
+            height="50px"
+            fontWeight={600}
+            bg="#0f90fa"
+            color="white"
+            line-height="24px"
+            display="flex"
+            justifyContent="space-around"
+            alignItems="center"
+            font-size="16px"
+            minW="172px"
+            border="none"
+            position="relative"
+            letterSpacing="0"
+            transition="background-color .2s"
+            onClick={() => {
+              const clickEvent = new MouseEvent("click", {
+                view: window,
+                bubbles: true,
+                cancelable: false,
+              });
+              const input = document.querySelector(".upload-input");
+              input?.dispatchEvent(clickEvent);
+            }}
+          >
+            Upload a video File
+          </Button>
+          <FormControl
+            marginLeft="20px"
+            fontWeight="extrabold"
+            padding="5px"
+            bg="transparent"
+            width={["100%", "100%", "100%", "100%"]}
+            fontSize="16px"
+          >
+            <Input
+              variant="flushed"
+              textAlign="center"
+              placeholder="Paste a video URL"
+            />
+          </FormControl>
+        </Flex>
+      </Box>
     </Box>
   );
 };
