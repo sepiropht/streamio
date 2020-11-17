@@ -15,67 +15,114 @@ const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [login] = useLoginMutation();
   return (
-    <Wrapper variant="small">
-      <Formik
-        initialValues={{ usernameOrEmail: "", password: "" }}
-        onSubmit={async (values, { setErrors }) => {
-          const response = await login({
-            variables: values,
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  __typename: "Query",
-                  me: data?.login.user,
+    <Box
+      minHeight="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="stretch"
+      alignContent="stretch"
+    >
+      <Box
+        backgroundColor="#fff"
+        borderBottom="1px solid #e8e8e8"
+        fontSize="16px"
+        display="flex"
+        flex="0 0 auto"
+        flexDirection="row"
+        padding="10px 15px 12px 15px"
+      >
+        <Box>
+          <NextLink href="/">
+            <Box fontSize="20px" fontWeight={900} color="#2c2c2c">
+              Streamario
+            </Box>
+          </NextLink>
+        </Box>
+      </Box>
+
+      <Box
+        bg="#f1f1f1"
+        height="100%"
+        padding="10px"
+        width="100%"
+        flex="1 1"
+        display="flex"
+        flexDirection="column"
+      >
+        <Box textAlign="left" width="280px" margin="auto">
+          <Formik
+            initialValues={{ usernameOrEmail: "", password: "" }}
+            onSubmit={async (values, { setErrors }) => {
+              const response = await login({
+                variables: values,
+                update: (cache, { data }) => {
+                  cache.writeQuery<MeQuery>({
+                    query: MeDocument,
+                    data: {
+                      __typename: "Query",
+                      me: data?.login.user,
+                    },
+                  });
+                  cache.evict({ fieldName: "posts:{}" });
                 },
               });
-              cache.evict({ fieldName: "posts:{}" });
-            },
-          });
-          if (response.data?.login.errors) {
-            setErrors(toErrorMap(response.data.login.errors));
-          } else if (response.data?.login.user) {
-            if (typeof router.query.next === "string") {
-              router.push(router.query.next);
-            } else {
-              // worked
-              router.push("/");
-            }
-          }
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <InputField
-              name="usernameOrEmail"
-              placeholder="username or email"
-              label="Username or Email"
-            />
-            <Box mt={4}>
-              <InputField
-                name="password"
-                placeholder="password"
-                label="Password"
-                type="password"
-              />
+              if (response.data?.login.errors) {
+                setErrors(toErrorMap(response.data.login.errors));
+              } else if (response.data?.login.user) {
+                if (typeof router.query.next === "string") {
+                  router.push(router.query.next);
+                } else {
+                  // worked
+                  router.push("/");
+                }
+              }
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <InputField
+                  name="usernameOrEmail"
+                  placeholder="username or email"
+                  label="Username or Email"
+                />
+                <Box mt={4}>
+                  <InputField
+                    name="password"
+                    placeholder="password"
+                    label="Password"
+                    type="password"
+                  />
+                </Box>
+
+                <Button
+                  mt={4}
+                  type="submit"
+                  isLoading={isSubmitting}
+                  variantColor="teal"
+                  width="100%"
+                >
+                  login
+                </Button>
+              </Form>
+            )}
+          </Formik>
+          <Flex marginTop="30px">
+            <NextLink href="/forgot-password">
+              <Link color="#0f90fa" font-weight={600}>
+                Forgot your password?
+              </Link>
+            </NextLink>
+          </Flex>
+          <Box display="flex" flexDirection="row" marginTop="30px">
+            Don't have an account?{" "}
+            <Box fontWeight={600} marginLeft="10px" color="#0f90fa">
+              <NextLink href="/register"> Sign up for free</NextLink>
             </Box>
-            <Flex mt={2}>
-              <NextLink href="/forgot-password">
-                <Link ml="auto">forgot password?</Link>
-              </NextLink>
-            </Flex>
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              variantColor="teal"
-            >
-              login
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Wrapper>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
