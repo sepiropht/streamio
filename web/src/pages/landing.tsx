@@ -136,7 +136,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
             </NextLink>
 
             <NextLink href="pricings">
-              <Box margin="0 10px">Pricings </Box>
+              <Box margin="0 10px">Pricing </Box>
             </NextLink>
           </ListItem>
 
@@ -228,7 +228,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
               input?.dispatchEvent(clickEvent);
             }}
           >
-            Upload a video File
+            Upload a video file
           </Button>
           <FormControl
             margin="20px"
