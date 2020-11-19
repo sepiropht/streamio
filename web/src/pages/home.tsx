@@ -15,6 +15,7 @@ import { Card } from "../components/Card";
 import { useVideosQuery } from "../generated/graphql";
 import { unionBy } from "lodash";
 import validUrl from "valid-url";
+import validateFile from "../utils/validateFile";
 
 const Home = () => {
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
@@ -32,6 +33,7 @@ const Home = () => {
 
   const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
   const [uploadVideo] = useUploadVideoMutation();
+
   async function onPaste(e: any) {
     const url = e.clipboardData.getData("Text");
     if (!validUrl.isWebUri(url)) {
@@ -61,6 +63,10 @@ const Home = () => {
       const suffix = "test";
       const Bucket = `streamio/${suffix}`;
       const Key = `${uuidv4()}.mp4`;
+      if (!(await validateFile(file))) {
+        event.target = "";
+        return;
+      }
       const { data } = await uploadVideo({
         variables: {
           input: {
