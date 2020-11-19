@@ -135,7 +135,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
               </Box>
             </NextLink>
 
-            <NextLink href="pricings">
+            <NextLink href="/pricing">
               <Box margin="0 10px">Pricing </Box>
             </NextLink>
           </ListItem>
