@@ -1,5 +1,5 @@
 //import axios from "axios";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Layout } from "../components/Layout";
 import Link from "next/link";
 import { useUploadVideoMutation } from "../generated/graphql";
@@ -14,12 +14,14 @@ import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
 import { useVideosQuery } from "../generated/graphql";
 import { unionBy } from "lodash";
+import validUrl from "valid-url";
 
 const Home = () => {
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
     []
   );
+  const urlUpload = useRef<HTMLInputElement>(null);
   const { data, error, loading, fetchMore, variables } = useVideosQuery({
     variables: {
       limit: 15,
@@ -30,7 +32,29 @@ const Home = () => {
 
   const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
   const [uploadVideo] = useUploadVideoMutation();
-
+  async function onPaste(e: any) {
+    const url = e.clipboardData.getData("Text");
+    if (!validUrl.isWebUri(url)) {
+      return;
+    }
+    const Key = `${uuidv4()}.mp4`;
+    const { data } = await uploadVideo({
+      variables: {
+        input: {
+          title: "provisoire",
+          Key,
+          size: 0,
+        },
+      },
+    });
+    if (data) {
+      setVideo([...videos, { ...data?.uploadVideo }]);
+      setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
+    }
+    const res = axios.get(
+      `http://localhost:4000/processVideo/?url=${url}&key=${Key}&id=${data?.uploadVideo.id}`
+    );
+  }
   async function onChange(event: any) {
     uploadAws(event.target.files[0]);
     async function uploadAws(file: File) {
@@ -138,7 +162,9 @@ const Home = () => {
           fontSize="16px"
         >
           <input
+            ref={urlUpload}
             type="text"
+            onPaste={onPaste}
             style={{ width: "100%" }}
             placeholder="Paste a video Url"
           ></input>
