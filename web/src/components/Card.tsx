@@ -36,7 +36,10 @@ export const Card: React.FC<CardProps> = ({
       return await new Promise((resolve) => {
         const interval = setInterval(async () => {
           const { data } = await axios.get(
-            `http://localhost:4000/processVideo/?key=${Key.slice(0, 7)}`
+            `http://localhost:4000/processVideo/?key=${Key.slice(
+              0,
+              7
+            )}&id=${id}`
           );
           if (data.isAlreadyConvert) {
             setCardLoader(true);

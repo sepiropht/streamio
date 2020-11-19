@@ -23,6 +23,7 @@ import { createUpdootLoader } from "./utils/createUpdootLoader";
 import { VideoResolver } from "./resolvers/video";
 import convert from "./utils/convert";
 import s3 from "./utils/aws";
+import getVideoFromSocialMedia from "./utils/getVideoFromSocialMedia";
 //import getFromSocialMedia from "./utils/getVideoFromSocialMedia";
 //import streamify from "./utils/streamify";
 //import fs from "fs";
@@ -51,7 +52,7 @@ const main = async () => {
   );
   app.get("/processVideo", async (req: any, res: any) => {
     console.log("processVideo", req.query);
-    const { key } = req.query;
+    const { key, url } = req.query;
     const video = await getConnection()
       .getRepository(Video)
       .createQueryBuilder("video")
@@ -85,9 +86,25 @@ const main = async () => {
     };
     await changeStatus(true, key, false);
     res.json({ processing: true });
-
-    await convert(key);
-    await changeStatus(false, key, true);
+    if (url) {
+      const { fileName } = await getVideoFromSocialMedia(url, key);
+      await getConnection()
+        .createQueryBuilder()
+        .update(Video)
+        .set({
+          isConvertionPending: false,
+          isAlreadyConvert: true,
+          title: fileName,
+        })
+        .where("key = :key", {
+          key,
+        })
+        .returning("*")
+        .execute();
+    } else {
+      await convert(key);
+      await changeStatus(false, key, true);
+    }
   });
   app.get("/getVideo", async (req: any, res: any) => {
     console.log("getVideo");
@@ -114,10 +131,7 @@ const main = async () => {
       }
     }
   });
-  // app.get("/socialUrl", async (req: any, res: any) => {
-  //   const { socialUrl } = req.query;
-  //   //getFromSocialMedia(url)
-  // });
+
   app.use(express.static("images"));
   app.use(
     session({

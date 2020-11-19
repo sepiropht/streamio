@@ -19,6 +19,7 @@
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.165",
     "@types/uuid": "^8.3.0",
+    "@types/valid-url": "^1.0.3",
     "@urql/exchange-graphcache": "^3.0.2",
     "apollo-upload-client": "^14.1.2",
     "aws-sdk": "^2.784.0",
@@ -37,7 +38,8 @@
     "react-icons": "^3.11.0",
     "react-is": "^16.13.1",
     "urql": "^1.10.0",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.17.7",
