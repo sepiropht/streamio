@@ -268,6 +268,16 @@ export type DeletePostMutation = (
   & Pick<Mutation, 'deletePost'>
 );
 
+export type DeleteVideoMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteVideoMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteVideo'>
+);
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -572,6 +582,36 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const DeleteVideoDocument = gql`
+    mutation DeleteVideo($id: Int!) {
+  deleteVideo(id: $id)
+}
+    `;
+export type DeleteVideoMutationFn = Apollo.MutationFunction<DeleteVideoMutation, DeleteVideoMutationVariables>;
+
+/**
+ * __useDeleteVideoMutation__
+ *
+ * To run a mutation, you first call `useDeleteVideoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteVideoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteVideoMutation, { data, loading, error }] = useDeleteVideoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteVideoMutation(baseOptions?: Apollo.MutationHookOptions<DeleteVideoMutation, DeleteVideoMutationVariables>) {
+        return Apollo.useMutation<DeleteVideoMutation, DeleteVideoMutationVariables>(DeleteVideoDocument, baseOptions);
+      }
+export type DeleteVideoMutationHookResult = ReturnType<typeof useDeleteVideoMutation>;
+export type DeleteVideoMutationResult = Apollo.MutationResult<DeleteVideoMutation>;
+export type DeleteVideoMutationOptions = Apollo.BaseMutationOptions<DeleteVideoMutation, DeleteVideoMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)

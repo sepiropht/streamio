@@ -1,0 +1,3 @@
+mutation DeleteVideo($id: Int!) {
+  deleteVideo(id: $id)
+}
