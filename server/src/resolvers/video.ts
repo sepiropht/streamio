@@ -19,6 +19,7 @@ import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import path from "path";
+import fs from "fs";
 import s3 from "../utils/aws";
 //import convert from "src/utils/convert";
 //import convert from "../utils/convert";
@@ -89,29 +90,28 @@ export class VideoResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
-  async deleteVideo(
-    @Arg("id", () => Int) id: number,
-    @Ctx() { req }: MyContext
-  ): Promise<boolean> {
+  async deleteVideo(@Arg("id", () => Int) id: number): Promise<boolean> {
     // not cascade way
     const video = await Video.findOne(id);
     if (!video) {
       return false;
     }
 
-    if (video.creatorId !== req.session.userId) {
-      throw new Error("not authorized");
-    }
+    // if (video.creatorId !== req.session.userId) {
+    //   throw new Error("not authorized");
+    // }
 
     await Video.delete({ id });
     const uploadParams = {
       Bucket: "streamio/test",
       Key: video.key,
     };
+    const { name } = path.parse(video.key);
+    fs.unlinkSync("images/" + name + ".jpg");
     await s3.deleteObject(uploadParams).promise();
     return true;
   }
+
   @Query(() => PaginatedVideos)
   @UseMiddleware(isAuth)
   async videos(

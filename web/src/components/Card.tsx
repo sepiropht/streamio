@@ -13,6 +13,7 @@ interface CardProps {
   views: number;
   link: string;
   title: string;
+  onDeletedCard: (currentId: number) => void;
   videoUrl: string;
   isCardLoaded: boolean;
   id: number;
@@ -21,6 +22,7 @@ export const Card: React.FC<CardProps> = ({
   id,
   src,
   views,
+  onDeletedCard,
   title,
   link,
   videoUrl,
@@ -34,6 +36,7 @@ export const Card: React.FC<CardProps> = ({
   const imageElement = useRef<HTMLImageElement>();
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
+
   useEffect(() => {
     console.log({ link });
     async function pollingServer() {
@@ -76,15 +79,16 @@ export const Card: React.FC<CardProps> = ({
         display={show ? "flex" : "none"}
       >
         <ActionMenu
-          action={() =>
+          action={() => {
+            onDeletedCard(id);
             deleteVideo({
               variables: { id },
               // update: (cache) => {
               //   // Post:77
               //   cache.evict({ id: "Post:" + id });
               // },
-            })
-          }
+            });
+          }}
           name="Delete"
         >
           <RiDeleteBinFill></RiDeleteBinFill>
