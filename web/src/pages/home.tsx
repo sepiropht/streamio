@@ -1,5 +1,5 @@
 //import axios from "axios";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Layout } from "../components/Layout";
 import Link from "next/link";
 import { useUploadVideoMutation } from "../generated/graphql";
@@ -32,6 +32,7 @@ const Home = () => {
   });
 
   const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
+  const [videosTorender, setVideoToRender] = useState<Video[]>([]);
   const [uploadVideo] = useUploadVideoMutation();
 
   async function onPaste(e: any) {
@@ -98,23 +99,30 @@ const Home = () => {
     }
   }
 
-  const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
-    ({ id, title, points, key }) => {
-      return (
-        <Card
-          id={id}
-          key={key}
-          Key={key}
-          src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
-          views={points}
-          link={`/${key.slice(0, 7)}${id}`}
-          videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
-          title={title}
-          isCardLoaded={false}
-        ></Card>
-      );
-    }
-  );
+  useEffect(() => {
+    setVideoToRender(unionBy(videos, data?.videos.videos, "id"));
+    setVideosToLocalStorage(unionBy(videos, data?.videos.videos, "id"));
+  }, [videos, data?.videos.videos]);
+
+  const ListVideos = videosTorender.map(({ id, title, points, key }) => {
+    return (
+      <Card
+        id={id}
+        key={key}
+        Key={key}
+        src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
+        views={points}
+        link={`/${key.slice(0, 7)}${id}`}
+        videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
+        title={title}
+        onDeletedCard={(currentId: number) => {
+          setVideoToRender(videosTorender.filter(({ id }) => currentId !== id));
+          setVideosToLocalStorage(videos.filter(({ id }) => currentId !== id));
+        }}
+        isCardLoaded={false}
+      ></Card>
+    );
+  });
   return (
     <Layout>
       <Flex bg="white" padding="10px" marginBottom="20px">
