@@ -19,6 +19,7 @@ import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import path from "path";
+import s3 from "../utils/aws";
 //import convert from "src/utils/convert";
 //import convert from "../utils/convert";
 
@@ -98,11 +99,17 @@ export class VideoResolver {
     if (!video) {
       return false;
     }
+
     if (video.creatorId !== req.session.userId) {
       throw new Error("not authorized");
     }
 
     await Video.delete({ id });
+    const uploadParams = {
+      Bucket: "streamio/test",
+      Key: video.key,
+    };
+    await s3.deleteObject(uploadParams).promise();
     return true;
   }
   @Query(() => PaginatedVideos)

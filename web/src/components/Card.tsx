@@ -6,7 +6,7 @@ import { ImShare2 } from "react-icons/im";
 import { ModalPlayer } from "./ModalPlayer";
 import { BsThreeDots } from "react-icons/bs";
 import { RiDeleteBinFill } from "react-icons/ri";
-
+import { useDeleteVideoMutation } from "../generated/graphql";
 interface CardProps {
   Key: string;
   src: string;
@@ -32,7 +32,7 @@ export const Card: React.FC<CardProps> = ({
   const [isCardLoad, setCardLoader] = useState(isCardLoaded);
   const [video, setVideoUrl] = useState("");
   const [isMenuShow, showMenu] = useState(false);
-
+  const [deleteVideo] = useDeleteVideoMutation();
   useEffect(() => {
     console.log({ link });
     async function pollingServer() {
@@ -55,6 +55,41 @@ export const Card: React.FC<CardProps> = ({
     }
     pollingServer();
   }, []);
+  interface MenuCardProps {
+    show: boolean;
+  }
+  const MenuCard: React.FC<MenuCardProps> = ({ show }) => {
+    return (
+      <Box
+        zIndex={999999}
+        backgroundColor="#fff;"
+        border="1px solid rgba(0,0,0,.15)"
+        borderRadius="3px"
+        boxShadow="0 1px 3px rgba(0,0,0,.2)"
+        marginTop="10px"
+        position="absolute"
+        right="-16px;"
+        padding="3px"
+        top="268px"
+        display={show ? "flex" : "none"}
+      >
+        <ActionMenu
+          action={() =>
+            deleteVideo({
+              variables: { id },
+              // update: (cache) => {
+              //   // Post:77
+              //   cache.evict({ id: "Post:" + id });
+              // },
+            })
+          }
+          name="Delete"
+        >
+          <RiDeleteBinFill></RiDeleteBinFill>
+        </ActionMenu>
+      </Box>
+    );
+  };
 
   return (
     <>
@@ -209,30 +244,7 @@ export const Card: React.FC<CardProps> = ({
     </>
   );
 };
-interface MenuCardProps {
-  show: boolean;
-}
-const MenuCard: React.FC<MenuCardProps> = ({ show }) => {
-  return (
-    <Box
-      zIndex={999999}
-      backgroundColor="#fff;"
-      border="1px solid rgba(0,0,0,.15)"
-      borderRadius="3px"
-      boxShadow="0 1px 3px rgba(0,0,0,.2)"
-      marginTop="10px"
-      position="absolute"
-      right="-16px;"
-      padding="3px"
-      top="268px"
-      display={show ? "flex" : "none"}
-    >
-      <ActionMenu action={() => 2} name="Delete">
-        <RiDeleteBinFill></RiDeleteBinFill>
-      </ActionMenu>
-    </Box>
-  );
-};
+
 interface ActionMenuProps {
   name: string;
   action: () => void;
