@@ -18,7 +18,9 @@ export default async (videoPath: string, key: string) => {
         .on("end", (data: any) => {
           console.log(data);
           fs.createReadStream(`${key}/tn.png`).pipe(
-            fs.createWriteStream(`images/${key}.jpg`)
+            fs.createWriteStream(`images/${key}.jpg`).on("close", () => {
+              fs.rmdirSync(key, { recursive: true });
+            })
           );
           resolve();
         });
