@@ -98,7 +98,11 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
   ) : null;
 };
 
-export async function getServerSideProps({ query }) {
+export async function getServerSideProps({
+  query,
+}: {
+  query: { "video-id": string };
+}) {
   const [Key, id] = [query["video-id"].slice(0, 7), query["video-id"].slice(7)];
   return { props: { Key, id } };
 }
