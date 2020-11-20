@@ -43,7 +43,7 @@ const Home = () => {
     const { data } = await uploadVideo({
       variables: {
         input: {
-          title: "provisoire",
+          title: "",
           Key,
           size: 0,
         },

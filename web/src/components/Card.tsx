@@ -4,6 +4,8 @@ import NextLink from "next/link";
 import axios from "axios";
 import { ImShare2 } from "react-icons/im";
 import { ModalPlayer } from "./ModalPlayer";
+import { BsThreeDots } from "react-icons/bs";
+import { RiDeleteBinFill } from "react-icons/ri";
 
 interface CardProps {
   Key: string;
@@ -29,6 +31,7 @@ export const Card: React.FC<CardProps> = ({
   const [isVisible, showModal] = useState(false);
   const [isCardLoad, setCardLoader] = useState(isCardLoaded);
   const [video, setVideoUrl] = useState("");
+  const [isMenuShow, showMenu] = useState(false);
 
   useEffect(() => {
     console.log({ link });
@@ -74,6 +77,7 @@ export const Card: React.FC<CardProps> = ({
         style={{ display: isCardLoad ? "block" : "none" }}
         bg="white"
         border="1px solid #e8e8e8"
+        position="relative"
         border-radius="2px"
       >
         <Box
@@ -155,25 +159,100 @@ export const Card: React.FC<CardProps> = ({
               size="xs"
               bg="#748490"
               display="flex"
-              justifyContent="space-around"
+              justifyContent="space-between"
               color="white"
               alignSelf="center"
               marginLeft="10px"
               fontSize="10px"
               lineHeight={1.5}
+              height="16px"
               textAlign="center"
               position="relative"
-              top="-5px"
+              top="-2px"
               right={0}
             >
               <Box marginRight="10px" fontSize={11}>
                 <ImShare2></ImShare2>
               </Box>
-              Copy link
+              Copy Link
             </Button>
           </Flex>
         </Box>
+        <Box
+          display="flex"
+          flexDirection="row-reverse"
+          lineHeight="1.5"
+          padding="5px"
+          bg="#f9f9f9"
+          borderColor="rgba(0,0,0,.05)"
+        >
+          <Button
+            padding="0 15"
+            fontWeight={600}
+            borderRadius="3px"
+            height="26px"
+            lineHeight="24px;"
+            fontSize="13px"
+            variant="link"
+            display="flex"
+            justifyContent="space-between"
+            onClick={() => showMenu(isMenuShow ? false : true)}
+          >
+            <Box marginRight="8px">
+              <BsThreeDots></BsThreeDots>
+            </Box>
+            More
+          </Button>
+        </Box>
+        <MenuCard show={isMenuShow}></MenuCard>
       </Box>
     </>
   );
 };
+interface MenuCardProps {
+  show: boolean;
+}
+const MenuCard: React.FC<MenuCardProps> = ({ show }) => {
+  return (
+    <Box
+      zIndex={999999}
+      backgroundColor="#fff;"
+      border="1px solid rgba(0,0,0,.15)"
+      borderRadius="3px"
+      boxShadow="0 1px 3px rgba(0,0,0,.2)"
+      marginTop="10px"
+      position="absolute"
+      right="-16px;"
+      padding="3px"
+      top="268px"
+      display={show ? "flex" : "none"}
+    >
+      <ActionMenu action={() => 2} name="Delete">
+        <RiDeleteBinFill></RiDeleteBinFill>
+      </ActionMenu>
+    </Box>
+  );
+};
+interface ActionMenuProps {
+  name: string;
+  action: () => void;
+}
+const ActionMenu: React.FC<ActionMenuProps> = ({ name, action, children }) => (
+  <Box
+    position="relative"
+    cursor="pointer"
+    display="flex"
+    fontSize="13px"
+    textDecoration="none"
+    color="#748490"
+    whiteSpace="nowrap"
+    padding="8px 12px 8px 6px"
+    lineHeight="1.5em"
+    onClick={action}
+    alignItems="center"
+    width="148px"
+  >
+    <Box marginRight="8px">{children}</Box>
+    {name}
+  </Box>
+);
