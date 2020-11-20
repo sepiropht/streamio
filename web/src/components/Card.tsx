@@ -1,5 +1,5 @@
 import { Box, Flex, Image, Textarea, Button, Spinner } from "@chakra-ui/core";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import NextLink from "next/link";
 import axios from "axios";
 import { ImShare2 } from "react-icons/im";
@@ -31,6 +31,7 @@ export const Card: React.FC<CardProps> = ({
   const [isVisible, showModal] = useState(false);
   const [isCardLoad, setCardLoader] = useState(isCardLoaded);
   const [video, setVideoUrl] = useState("");
+  const imageElement = useRef<HTMLImageElement>();
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
   useEffect(() => {
@@ -47,6 +48,7 @@ export const Card: React.FC<CardProps> = ({
           if (data.isAlreadyConvert) {
             setCardLoader(true);
             setVideoUrl(videoUrl);
+            if (imageElement?.current) imageElement.current.src = src;
             resolve();
             clearInterval(interval);
           }
@@ -155,11 +157,11 @@ export const Card: React.FC<CardProps> = ({
             </svg>
           </Box>
           <Image
+            ref={imageElement}
             objectFit="cover"
             minHeight="160px"
             height="120px"
             width="100%"
-            src={src}
           ></Image>
         </Box>
         <Box padding="10px">
