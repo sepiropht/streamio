@@ -16,6 +16,7 @@ interface CardProps {
   onDeletedCard: (currentId: number) => void;
   videoUrl: string;
   isCardLoaded: boolean;
+  progress?: number;
   id: number;
 }
 export const Card: React.FC<CardProps> = ({
@@ -27,6 +28,7 @@ export const Card: React.FC<CardProps> = ({
   link,
   videoUrl,
   Key,
+  progress,
   isCardLoaded = true,
 }) => {
   const [isHover, setHover] = useState(false);
@@ -38,7 +40,7 @@ export const Card: React.FC<CardProps> = ({
   const [deleteVideo] = useDeleteVideoMutation();
 
   useEffect(() => {
-    console.log({ link });
+    console.log({ link, progress });
     async function pollingServer() {
       return await new Promise((resolve) => {
         const interval = setInterval(async () => {
@@ -58,8 +60,8 @@ export const Card: React.FC<CardProps> = ({
         }, 1000);
       });
     }
-    pollingServer();
-  }, []);
+    if (!progress) pollingServer();
+  }, [progress]);
   interface MenuCardProps {
     show: boolean;
   }
@@ -104,7 +106,7 @@ export const Card: React.FC<CardProps> = ({
         videoUrl={video}
         close={showModal}
       ></ModalPlayer>
-      <Spinner
+      {/* <Spinner
         style={{ display: isCardLoad ? "none" : "block" }}
         thickness="4px"
         speed="0.65s"
@@ -113,23 +115,25 @@ export const Card: React.FC<CardProps> = ({
         size="xl"
       >
         Still Processing the video...
-      </Spinner>
+      </Spinner> */}
       <Box
-        style={{ display: isCardLoad ? "block" : "none" }}
         bg="white"
         border="1px solid #e8e8e8"
         position="relative"
         border-radius="2px"
       >
         <Box
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
+          onMouseEnter={() => (progress ? "" : setHover(true))}
+          onMouseLeave={() => (progress ? "" : setHover(false))}
           width="100%"
           position="relative"
         >
+          <Box display={progress ? "block" : "none"} verticalAlign="center">
+            <ProgressBar task={"Processing"} progress={progress}></ProgressBar>
+          </Box>
           <Box
             className="play-button"
-            onClick={() => showModal(true)}
+            onClick={() => (progress ? "" : showModal(true))}
             cursor="pointer"
             position="absolute"
             color="hsla(0,0%,100%,.9)"
@@ -164,6 +168,7 @@ export const Card: React.FC<CardProps> = ({
             ref={imageElement}
             objectFit="cover"
             minHeight="160px"
+            bg="black"
             height="120px"
             width="100%"
           ></Image>
@@ -272,5 +277,57 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ name, action, children }) => (
   >
     <Box marginRight="8px">{children}</Box>
     {name}
+  </Box>
+);
+interface ProgressBarProps {
+  task: string;
+  progress?: number;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ task, progress }) => (
+  <Box
+    fontSize=" 18px"
+    position="absolute"
+    top=" 0"
+    left="0"
+    right="0"
+    bottom="0"
+    bg="rgba(0,0,0,.5)"
+    display="flex"
+    alignItems="center"
+    justify-content="center"
+    flexDirection="column"
+    className=" progress-overlay"
+  >
+    <Box
+      fontSize="14px"
+      color="#fff"
+      lineHeight="20px"
+      height="20px"
+      marginTop="40px"
+      marginBottom="10px"
+      className="progress-status"
+    >
+      {task}...
+    </Box>
+    <Box
+      verticalAlign=" middle"
+      display="inline-block"
+      borderRadius="4px"
+      border="1px solid hsla(0,0%,100%,.9)"
+      width="160px"
+      margin="0 10px"
+      className="progress-bar-track"
+    >
+      <Box
+        bg="hsla(0,0%,100%,.9)"
+        height="30px"
+        position="relative"
+        width="0"
+        transition="width 1s linear"
+        className="progress-bar-value"
+        style={{ width: `${progress}%` }}
+      ></Box>
+    </Box>
   </Box>
 );
