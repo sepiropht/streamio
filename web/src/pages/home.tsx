@@ -1,5 +1,5 @@
 //import axios from "axios";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Layout } from "../components/Layout";
 import Link from "next/link";
 import { useUploadVideoMutation } from "../generated/graphql";
@@ -17,6 +17,14 @@ import { unionBy } from "lodash";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
 
+const ws = new WebSocket("ws://localhost:4000");
+ws.onmessage = function (ms) {
+  console.log(ms);
+};
+ws.onopen = function () {
+  console.log("socket open");
+};
+
 const Home = () => {
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
@@ -30,11 +38,10 @@ const Home = () => {
     },
     notifyOnNetworkStatusChange: true,
   });
-
-  const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
-  const [videosTorender, setVideoToRender] = useState<Video[]>([]);
+  console.log("SERVER", data);
+  const [videos, setVideo] = useState<Video[]>([]);
   const [uploadVideo] = useUploadVideoMutation();
-
+  console.log("rebout ?", videos);
   async function onPaste(e: any) {
     const url = e.clipboardData.getData("Text");
     if (!validUrl.isWebUri(url)) {
@@ -59,6 +66,9 @@ const Home = () => {
     );
   }
   async function onChange(event: any) {
+    ws.send(JSON.stringify({ card: uuidv4() }));
+    console.log("send");
+    return;
     uploadAws(event.target.files[0]);
     async function uploadAws(file: File) {
       const suffix = "test";
@@ -82,6 +92,7 @@ const Home = () => {
         Key,
         Body: file,
       };
+      let idCurrent: number;
 
       s3.upload(uploadParams, async (err: any, res: any) => {
         if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
@@ -89,25 +100,54 @@ const Home = () => {
         const r = await axios.get(
           `http://localhost:4000/processVideo/?id=${data?.uploadVideo.id}&key=${Key}`
         );
-        console.log(r);
-        // Wait the end of upload to s3 before rendering the card
         if (data) {
-          setVideo([...videos, { ...data?.uploadVideo }]);
-          setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
+          console.log("before update video", videos);
+          setVideo([{ ...data?.uploadVideo, progress: 1 }, ...videos]);
+          console.log("MERDE", [
+            ...videos,
+            { ...data?.uploadVideo, progress: 1 },
+          ]);
+          idCurrent = data?.uploadVideo.id;
+          console.log("after update video", videos);
         }
+        console.log(r);
+      }).on("httpUploadProgress", ({ loaded, total }) => {
+        const progress = loaded === total ? undefined : (loaded / total) * 100;
+
+        console.log({ loaded, total, progress });
+        console.log("before update proress", videos);
+        setVideo(
+          videos.map((video) => {
+            if (video.id === idCurrent) {
+              return {
+                ...video,
+                progress,
+              };
+            }
+            return {
+              ...video,
+            };
+          })
+        );
+        console.log("after update progress", videos);
       });
     }
   }
+  useEffect(() => {
+    console.log("Effect data?.videos.videos", videos);
+    setVideo(unionBy(videos, data?.videos.videos, "id"));
+  }, [data?.videos.videos]);
 
   useEffect(() => {
-    setVideoToRender(unionBy(videos, data?.videos.videos, "id"));
-    setVideosToLocalStorage(unionBy(videos, data?.videos.videos, "id"));
-  }, [videos, data?.videos.videos]);
+    //setVideoToRender(unionBy(videos, data?.videos.videos, "id"));
+    setVideosToLocalStorage(videos);
+  }, [videos]);
 
-  const ListVideos = videosTorender.map(({ id, title, points, key }) => {
+  const ListVideos = videos.map(({ id, title, points, key, progress }) => {
     return (
       <Card
         id={id}
+        progress={progress}
         key={key}
         Key={key}
         src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
@@ -116,8 +156,8 @@ const Home = () => {
         videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
         title={title}
         onDeletedCard={(currentId: number) => {
-          setVideoToRender(videosTorender.filter(({ id }) => currentId !== id));
-          setVideosToLocalStorage(videos.filter(({ id }) => currentId !== id));
+          setVideo(videos.filter(({ id }) => currentId !== id));
+          ws.send(JSON.stringify({ card: id }));
         }}
         isCardLoaded={false}
       ></Card>
