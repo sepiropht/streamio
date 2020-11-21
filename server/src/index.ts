@@ -2,6 +2,8 @@ import "reflect-metadata";
 import "dotenv-safe/config";
 import { __prod__, COOKIE_NAME } from "./constants";
 import express from "express";
+import http from "http";
+import WebSocket from "ws";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
@@ -23,8 +25,8 @@ import { createUpdootLoader } from "./utils/createUpdootLoader";
 import { VideoResolver } from "./resolvers/video";
 import convert from "./utils/convert";
 import s3 from "./utils/aws";
+import { v4 as uuidv4 } from "uuid";
 import getVideoFromSocialMedia from "./utils/getVideoFromSocialMedia";
-//import getFromSocialMedia from "./utils/getVideoFromSocialMedia";
 //import streamify from "./utils/streamify";
 //import fs from "fs";
 
@@ -39,6 +41,8 @@ const main = async () => {
   });
   conn.runMigrations();
 
+  // await Video.delete({ id: 163 });
+
   const app = express();
 
   const RedisStore = connectRedis(session);
@@ -50,6 +54,23 @@ const main = async () => {
       credentials: true,
     })
   );
+  const server = http.createServer(app);
+  const websocketServer = new WebSocket.Server({ server });
+  const connections = [];
+  websocketServer.on("connection", (webSocketClient: any) => {
+    //send feedback to the incoming connection
+    const id = uuidv4();
+    webSocketClient.send('{ "connection" : "ok"}');
+    connections.push({ id, client: webSocketClient });
+    const client = webSocketClient;
+    //when a message is received
+    webSocketClient.on("message", (message: any) => {
+      //for each websocket client
+      console.log("message :", message);
+      client.send(JSON.stringify({ id, message }));
+    });
+  });
+
   app.get("/processVideo", async (req: any, res: any) => {
     console.log("processVideo", req.query);
     const { key, url } = req.query;
@@ -172,7 +193,7 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(parseInt(process.env.PORT), () => {
+  server.listen(parseInt(process.env.PORT), () => {
     console.log("server started on localhost:4000");
   });
 };
