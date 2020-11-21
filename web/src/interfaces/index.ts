@@ -7,4 +7,5 @@ export type Video = {
   id: number;
   key: string;
   points: number;
+  progress?: number;
 };
