@@ -7,6 +7,7 @@ import { ModalPlayer } from "./ModalPlayer";
 import { BsThreeDots } from "react-icons/bs";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { useDeleteVideoMutation } from "../generated/graphql";
+import { useCopyToClipboard } from "react-use";
 interface CardProps {
   Key: string;
   src: string;
@@ -42,6 +43,7 @@ export const Card: React.FC<CardProps> = ({
   const imageElement = useRef<HTMLImageElement>();
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
+  const [_, copyToClipboard] = useCopyToClipboard();
 
   useEffect(() => {
     upload
@@ -66,21 +68,17 @@ export const Card: React.FC<CardProps> = ({
     if (ws)
       ws.onmessage = ({ data }) => {
         const res = JSON.parse(data);
+        console.log(res, { cardKey: Key });
         if (res.progress && res.Key && Key === res.Key) {
           setTask("Processing");
           setProgress(parseInt(res.progress.percent, 10));
         }
-        if (!res.progress) {
-          console.log(res);
-        }
-        if (res.imageReady) {
-          console.log("imageReady");
+
+        if (res.imageReady && res.Key === Key) {
           if (imageElement?.current) imageElement.current.src = src;
         }
         if (res.done && Key === res.Key) {
           setProgress(undefined);
-          console.log("imageReady");
-          if (imageElement?.current) imageElement.current.src = src;
           setVideoUrl(videoUrl);
         }
       };
@@ -89,7 +87,6 @@ export const Card: React.FC<CardProps> = ({
   useEffect(() => {
     function setCard() {
       setVideoUrl(videoUrl);
-      console.log("imageReady");
       if (imageElement?.current) imageElement.current.src = src;
     }
     if (!progress) setCard();
@@ -251,6 +248,7 @@ export const Card: React.FC<CardProps> = ({
               position="relative"
               top="-2px"
               right={0}
+              onClick={() => copyToClipboard(`https://streamio.com${link}`)}
             >
               <Box marginRight="10px" fontSize={11}>
                 <ImShare2></ImShare2>

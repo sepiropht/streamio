@@ -41,13 +41,13 @@ export default async (
               .save(filePath)
 
               .on("end", async () => {
+                client.send(JSON.stringify({ done: "done", Key }));
                 await s3
                   .upload({
                     Body: fs.createReadStream(filePath),
                     ...uploadParams,
                   })
                   .promise();
-                client.send(JSON.stringify({ done: "done", Key }));
                 resolve({ oldKey: Key, newKey });
               });
           })

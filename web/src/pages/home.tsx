@@ -58,7 +58,8 @@ const Home = () => {
       setVideo([
         {
           ...data?.uploadVideo,
-          progress: 0,
+          ws: ws.current,
+          progress: 0.1,
         },
         ...videos,
       ]);
