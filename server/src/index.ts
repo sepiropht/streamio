@@ -56,77 +56,22 @@ const main = async () => {
   );
   const server = http.createServer(app);
   const websocketServer = new WebSocket.Server({ server });
-  const connections = [];
   websocketServer.on("connection", (webSocketClient: any) => {
-    //send feedback to the incoming connection
     const id = uuidv4();
     webSocketClient.send('{ "connection" : "ok"}');
-    connections.push({ id, client: webSocketClient });
     const client = webSocketClient;
-    //when a message is received
     webSocketClient.on("message", (message: any) => {
-      //for each websocket client
       console.log("message :", message);
-      client.send(JSON.stringify({ id, message }));
+      const res = JSON.parse(message);
+      if (res.hasOwnProperty("processVideo")) {
+        console.log("PROCESSVIDEO", res);
+        processVideo(client, res.key, res.url);
+      } else {
+        client.send(JSON.stringify({ id, message }));
+      }
     });
   });
 
-  app.get("/processVideo", async (req: any, res: any) => {
-    console.log("processVideo", req.query);
-    const { key, url } = req.query;
-    const video = await getConnection()
-      .getRepository(Video)
-      .createQueryBuilder("video")
-      .where("video.key like :key", { key: `%${key}%` })
-      .getOne();
-
-    console.log(video?.isAlreadyConvert, video?.isConvertionPending);
-    if (video?.isAlreadyConvert) {
-      return res.json({ isAlreadyConvert: true });
-    }
-    if (video?.isConvertionPending) {
-      return res.json({ processing: true });
-    }
-    const changeStatus = async (
-      isPending: boolean,
-      key: string,
-      isAlreadyConvert: boolean
-    ) => {
-      console.log("before status");
-      await getConnection()
-        .createQueryBuilder()
-        .update(Video)
-        .set({ isConvertionPending: isPending, isAlreadyConvert })
-        .where("key = :key", {
-          key,
-        })
-        .returning("*")
-        .execute();
-
-      console.log("after status");
-    };
-    await changeStatus(true, key, false);
-    res.json({ processing: true });
-    if (url) {
-      const { fileName } = await getVideoFromSocialMedia(url, key);
-      await getConnection()
-        .createQueryBuilder()
-        .update(Video)
-        .set({
-          isConvertionPending: false,
-          isAlreadyConvert: true,
-          title: fileName,
-        })
-        .where("key = :key", {
-          key,
-        })
-        .returning("*")
-        .execute();
-    } else {
-      await convert(key);
-      await changeStatus(false, key, true);
-    }
-  });
   app.get("/getVideo", async (req: any, res: any) => {
     console.log("getVideo");
     let { key } = req.query;
@@ -201,3 +146,59 @@ const main = async () => {
 main().catch((err) => {
   console.error(err);
 });
+
+async function processVideo(client: any, key: string, url: string) {
+  console.log("processVideo");
+  const video = await getConnection()
+    .getRepository(Video)
+    .createQueryBuilder("video")
+    .where("video.key like :key", { key: `%${key}%` })
+    .getOne();
+
+  console.log(video?.isAlreadyConvert, video?.isConvertionPending);
+  if (video?.isAlreadyConvert) {
+    return client.send(JSON.stringify({ isAlreadyConvert: true }));
+  }
+  if (video?.isConvertionPending) {
+    return client.send(JSON.stringify({ processing: true }));
+  }
+  const changeStatus = async (
+    isPending: boolean,
+    key: string,
+    isAlreadyConvert: boolean
+  ) => {
+    console.log("before status");
+    await getConnection()
+      .createQueryBuilder()
+      .update(Video)
+      .set({ isConvertionPending: isPending, isAlreadyConvert })
+      .where("key = :key", {
+        key,
+      })
+      .returning("*")
+      .execute();
+
+    console.log("after status");
+  };
+  await changeStatus(true, key, false);
+  client.send(JSON.stringify({ processing: true }));
+  if (url) {
+    const { fileName } = await getVideoFromSocialMedia(url, key, client);
+    await getConnection()
+      .createQueryBuilder()
+      .update(Video)
+      .set({
+        isConvertionPending: false,
+        isAlreadyConvert: true,
+        title: fileName,
+      })
+      .where("key = :key", {
+        key,
+      })
+      .returning("*")
+      .execute();
+  } else {
+    await convert(key, client);
+    await changeStatus(false, key, true);
+  }
+}
