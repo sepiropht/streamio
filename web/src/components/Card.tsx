@@ -10,9 +10,11 @@ import { useDeleteVideoMutation } from "../generated/graphql";
 interface CardProps {
   Key: string;
   src: string;
+  ws?: WebSocket;
   views: number;
   link: string;
   title: string;
+  upload?: any;
   onDeletedCard: (currentId: number) => void;
   videoUrl: string;
   isCardLoaded: boolean;
@@ -28,40 +30,70 @@ export const Card: React.FC<CardProps> = ({
   link,
   videoUrl,
   Key,
+  upload,
+  ws,
   progress,
-  isCardLoaded = true,
 }) => {
   const [isHover, setHover] = useState(false);
   const [isVisible, showModal] = useState(false);
-  const [isCardLoad, setCardLoader] = useState(isCardLoaded);
+  const [currentProgress, setProgress] = useState(progress);
+  const [task, setTask] = useState("");
   const [video, setVideoUrl] = useState("");
   const imageElement = useRef<HTMLImageElement>();
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
 
   useEffect(() => {
-    console.log({ link, progress });
-    async function pollingServer() {
-      return await new Promise((resolve) => {
-        const interval = setInterval(async () => {
-          const { data } = await axios.get(
-            `http://localhost:4000/processVideo/?key=${Key.slice(
-              0,
-              7
-            )}&id=${id}`
+    upload
+      ? upload(async (err: any, res: any) => {
+          if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
+          ws?.send(
+            JSON.stringify({
+              processVideo: "",
+              key: Key,
+            })
           );
-          if (data.isAlreadyConvert) {
-            setCardLoader(true);
-            setVideoUrl(videoUrl);
-            if (imageElement?.current) imageElement.current.src = src;
-            resolve();
-            clearInterval(interval);
+          setProgress(1);
+        }).on(
+          "httpUploadProgress",
+          ({ loaded, total }: { loaded: number; total: number }) => {
+            setProgress((loaded / total) * 100);
           }
-        }, 1000);
-      });
+        ) && setTask("Uploading")
+      : "";
+  }, []);
+  useEffect(() => {
+    if (ws)
+      ws.onmessage = ({ data }) => {
+        const res = JSON.parse(data);
+        if (res.progress && res.Key && Key === res.Key) {
+          setTask("Processing");
+          setProgress(parseInt(res.progress.percent, 10));
+        }
+        if (!res.progress) {
+          console.log(res);
+        }
+        if (res.imageReady) {
+          console.log("imageReady");
+          if (imageElement?.current) imageElement.current.src = src;
+        }
+        if (res.done && Key === res.Key) {
+          setProgress(undefined);
+          console.log("imageReady");
+          if (imageElement?.current) imageElement.current.src = src;
+          setVideoUrl(videoUrl);
+        }
+      };
+  }, []);
+
+  useEffect(() => {
+    function setCard() {
+      setVideoUrl(videoUrl);
+      console.log("imageReady");
+      if (imageElement?.current) imageElement.current.src = src;
     }
-    if (!progress) pollingServer();
-  }, [progress]);
+    if (!progress) setCard();
+  }, []);
   interface MenuCardProps {
     show: boolean;
   }
@@ -123,17 +155,20 @@ export const Card: React.FC<CardProps> = ({
         border-radius="2px"
       >
         <Box
-          onMouseEnter={() => (progress ? "" : setHover(true))}
-          onMouseLeave={() => (progress ? "" : setHover(false))}
+          onMouseEnter={() => (currentProgress ? "" : setHover(true))}
+          onMouseLeave={() => (currentProgress ? "" : setHover(false))}
           width="100%"
           position="relative"
         >
-          <Box display={progress ? "block" : "none"} verticalAlign="center">
-            <ProgressBar task={"Processing"} progress={progress}></ProgressBar>
+          <Box
+            display={currentProgress ? "block" : "none"}
+            verticalAlign="center"
+          >
+            <ProgressBar task={task} progress={currentProgress}></ProgressBar>
           </Box>
           <Box
             className="play-button"
-            onClick={() => (progress ? "" : showModal(true))}
+            onClick={() => (currentProgress ? "" : showModal(true))}
             cursor="pointer"
             position="absolute"
             color="hsla(0,0%,100%,.9)"

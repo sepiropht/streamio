@@ -17,19 +17,16 @@ import { unionBy } from "lodash";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
 
-const ws = new WebSocket("ws://localhost:4000");
-ws.onmessage = function (ms) {
-  console.log(ms);
-};
-ws.onopen = function () {
-  console.log("socket open");
-};
-
+interface card extends Video {
+  ws?: WebSocket;
+  upload?: any;
+}
 const Home = () => {
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
     []
   );
+  const ws = useRef<WebSocket>();
   const urlUpload = useRef<HTMLInputElement>(null);
   const { data, error, loading, fetchMore, variables } = useVideosQuery({
     variables: {
@@ -39,9 +36,9 @@ const Home = () => {
     notifyOnNetworkStatusChange: true,
   });
   console.log("SERVER", data);
-  const [videos, setVideo] = useState<Video[]>([]);
+  const [videos, setVideo] = useState<card[]>([]);
   const [uploadVideo] = useUploadVideoMutation();
-  console.log("rebout ?", videos);
+
   async function onPaste(e: any) {
     const url = e.clipboardData.getData("Text");
     if (!validUrl.isWebUri(url)) {
@@ -58,17 +55,26 @@ const Home = () => {
       },
     });
     if (data) {
-      setVideo([...videos, { ...data?.uploadVideo }]);
+      setVideo([
+        {
+          ...data?.uploadVideo,
+          progress: 0,
+        },
+        ...videos,
+      ]);
+
+      ws?.current?.send(
+        JSON.stringify({
+          processVideo: "",
+          key: Key,
+          url,
+        })
+      );
       setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
     }
-    const res = axios.get(
-      `http://localhost:4000/processVideo/?url=${url}&key=${Key}&id=${data?.uploadVideo.id}`
-    );
   }
+
   async function onChange(event: any) {
-    ws.send(JSON.stringify({ card: uuidv4() }));
-    console.log("send");
-    return;
     uploadAws(event.target.files[0]);
     async function uploadAws(file: File) {
       const suffix = "test";
@@ -92,49 +98,23 @@ const Home = () => {
         Key,
         Body: file,
       };
-      let idCurrent: number;
 
-      s3.upload(uploadParams, async (err: any, res: any) => {
-        if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
-        console.log(res);
-        const r = await axios.get(
-          `http://localhost:4000/processVideo/?id=${data?.uploadVideo.id}&key=${Key}`
-        );
-        if (data) {
-          console.log("before update video", videos);
-          setVideo([{ ...data?.uploadVideo, progress: 1 }, ...videos]);
-          console.log("MERDE", [
-            ...videos,
-            { ...data?.uploadVideo, progress: 1 },
-          ]);
-          idCurrent = data?.uploadVideo.id;
-          console.log("after update video", videos);
-        }
-        console.log(r);
-      }).on("httpUploadProgress", ({ loaded, total }) => {
-        const progress = loaded === total ? undefined : (loaded / total) * 100;
+      const upload = (callback: any) => s3.upload(uploadParams, callback);
 
-        console.log({ loaded, total, progress });
-        console.log("before update proress", videos);
-        setVideo(
-          videos.map((video) => {
-            if (video.id === idCurrent) {
-              return {
-                ...video,
-                progress,
-              };
-            }
-            return {
-              ...video,
-            };
-          })
-        );
-        console.log("after update progress", videos);
-      });
+      if (data)
+        setVideo([
+          {
+            ...data?.uploadVideo,
+            ws: ws.current,
+            progress: 0.1,
+            upload,
+          },
+          ...videos,
+        ]);
+      setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
     }
   }
   useEffect(() => {
-    console.log("Effect data?.videos.videos", videos);
     setVideo(unionBy(videos, data?.videos.videos, "id"));
   }, [data?.videos.videos]);
 
@@ -143,26 +123,36 @@ const Home = () => {
     setVideosToLocalStorage(videos);
   }, [videos]);
 
-  const ListVideos = videos.map(({ id, title, points, key, progress }) => {
-    return (
-      <Card
-        id={id}
-        progress={progress}
-        key={key}
-        Key={key}
-        src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
-        views={points}
-        link={`/${key.slice(0, 7)}${id}`}
-        videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
-        title={title}
-        onDeletedCard={(currentId: number) => {
-          setVideo(videos.filter(({ id }) => currentId !== id));
-          ws.send(JSON.stringify({ card: id }));
-        }}
-        isCardLoaded={false}
-      ></Card>
-    );
-  });
+  useEffect(() => {
+    ws.current = new WebSocket("ws://localhost:4000");
+    ws.current.onopen = () => console.log("ws opened");
+    ws.current.onclose = () => console.log("ws closed");
+
+    return () => ws.current?.close();
+  }, []);
+  const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
+    ({ id, title, points, key, progress, ws, upload }) => {
+      return (
+        <Card
+          id={id}
+          progress={progress}
+          key={key}
+          Key={key}
+          upload={upload}
+          ws={ws}
+          src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
+          views={points}
+          link={`/${key.slice(0, 7)}${id}`}
+          videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
+          title={title}
+          onDeletedCard={(currentId: number) => {
+            setVideo(videos.filter(({ id }) => currentId !== id));
+          }}
+          isCardLoaded={false}
+        ></Card>
+      );
+    }
+  );
   return (
     <Layout>
       <Flex bg="white" padding="10px" marginBottom="20px">
