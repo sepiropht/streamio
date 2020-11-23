@@ -12,7 +12,7 @@ export default async (
   client: any
 ): Promise<{ fileName: string }> => {
   console.log({ url, key });
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const video = youtubedl(url, [], {});
     let fileName: string;
     // Will be called when the download starts.
@@ -36,6 +36,7 @@ export default async (
         .duration(10 * 60)
         .format("mp4")
         .save(filePath)
+        .on("error", (err: any) => reject(err))
         .on("end", async () => {
           client.send(JSON.stringify({ done: "done", Key: newKey }));
           await s3
@@ -56,6 +57,7 @@ export default async (
         fileName = name;
         console.log("size: " + info.size);
       })
+      .on("error", (err) => reject(err))
       .pipe(fs.createWriteStream(videoTempPath).on("close", process));
   });
 };
