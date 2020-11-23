@@ -4,6 +4,7 @@ query Video($id: Int!) {
     title
     points
     key
+    isConvertionPending
     creator {
       id
     }

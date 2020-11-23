@@ -417,7 +417,7 @@ export type VideoQuery = (
   { __typename?: 'Query' }
   & { Video?: Maybe<(
     { __typename?: 'Video' }
-    & Pick<Video, 'id' | 'title' | 'points' | 'key'>
+    & Pick<Video, 'id' | 'title' | 'points' | 'key' | 'isConvertionPending'>
     & { creator: (
       { __typename?: 'User' }
       & Pick<User, 'id'>
@@ -958,6 +958,7 @@ export const VideoDocument = gql`
     title
     points
     key
+    isConvertionPending
     creator {
       id
     }
