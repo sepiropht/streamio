@@ -1,13 +1,13 @@
-import { Box, Flex, Image, Textarea, Button, Spinner } from "@chakra-ui/core";
+import { Box, Flex, Image, Textarea, Button } from "@chakra-ui/core";
 import { useState, useEffect, useRef } from "react";
 import NextLink from "next/link";
-import axios from "axios";
 import { ImShare2 } from "react-icons/im";
 import { ModalPlayer } from "./ModalPlayer";
 import { BsThreeDots } from "react-icons/bs";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { useDeleteVideoMutation } from "../generated/graphql";
 import { useCopyToClipboard } from "react-use";
+import { useRouter } from "next/router";
 interface CardProps {
   Key: string;
   src: string;
@@ -39,6 +39,7 @@ export const Card: React.FC<CardProps> = ({
   const [isVisible, showModal] = useState(false);
   const [currentProgress, setProgress] = useState(progress);
   const [task, setTask] = useState("");
+  const router = useRouter();
   const [video, setVideoUrl] = useState("");
   const imageElement = useRef<HTMLImageElement>();
   const [isMenuShow, showMenu] = useState(false);
@@ -68,7 +69,6 @@ export const Card: React.FC<CardProps> = ({
     if (ws)
       ws.onmessage = ({ data }) => {
         const res = JSON.parse(data);
-        console.log(res, { cardKey: Key });
         if (res.delete && res.key === Key) {
           onDeletedCard(id);
         }
@@ -268,6 +268,20 @@ export const Card: React.FC<CardProps> = ({
           bg="#f9f9f9"
           borderColor="rgba(0,0,0,.05)"
         >
+          <Button
+            padding="0 15"
+            fontWeight={600}
+            borderRadius="3px"
+            height="26px"
+            lineHeight="24px;"
+            fontSize="13px"
+            variant="link"
+            display="flex"
+            justifyContent="space-between"
+            onClick={() => router.push({ pathname: "/edit", query: { Key } })}
+          >
+            Edit
+          </Button>
           <Button
             padding="0 15"
             fontWeight={600}
