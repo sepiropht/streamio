@@ -10,7 +10,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/core";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
-import { useVideosQuery } from "../generated/graphql";
+import { useVideosQuery, useDeleteVideoMutation } from "../generated/graphql";
 import { unionBy } from "lodash";
 import { useRouter } from "next/router";
 import validUrl from "valid-url";
@@ -46,6 +46,7 @@ const Home = () => {
     "data",
     []
   );
+  const [deleteVideoMutation] = useDeleteVideoMutation();
   const ws = useRef<WebSocket>();
   const urlUpload = useRef<HTMLInputElement>(null);
   const { data, error, loading, fetchMore, variables } = useVideosQuery({
@@ -185,6 +186,7 @@ const Home = () => {
           videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
           title={title}
           onDeletedCard={(currentId: number) => {
+            deleteVideoMutation({ variables: { id: currentId } });
             setVideo(videos.filter(({ id }) => currentId !== id));
           }}
           isCardLoaded={false}
