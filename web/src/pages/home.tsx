@@ -16,7 +16,19 @@ import { useVideosQuery } from "../generated/graphql";
 import { unionBy } from "lodash";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
+import Modal from "react-modal";
+Modal.setAppElement("#__next");
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
 interface card extends Video {
   ws?: WebSocket;
   upload?: any;
@@ -38,6 +50,16 @@ const Home = () => {
   console.log("SERVER", data);
   const [videos, setVideo] = useState<card[]>([]);
   const [uploadVideo] = useUploadVideoMutation();
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+    console.log("CLOSE MODAL");
+  }
 
   async function onPaste(e: any) {
     const url = e.clipboardData.getData("Text");
@@ -83,6 +105,7 @@ const Home = () => {
       const Key = `${uuidv4()}.mp4`;
       if (!(await validateFile(file))) {
         event.target = "";
+        openModal();
         return;
       }
       const { data } = await uploadVideo({
@@ -128,6 +151,9 @@ const Home = () => {
     ws.current = new WebSocket("ws://localhost:4000");
     ws.current.onopen = () => console.log("ws opened");
     ws.current.onclose = () => console.log("ws closed");
+    // ws.current.onmessage = ({ data }) => {
+    //   console.log(data);
+    // };
 
     return () => ws.current?.close();
   }, []);
@@ -156,6 +182,15 @@ const Home = () => {
   );
   return (
     <Layout>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <h1>To large or too long</h1>
+        <p> This video is either too large (500MB) or too long (10min)</p>
+      </Modal>
       <Flex bg="white" padding="10px" marginBottom="20px">
         <FormControl display="none" bg="white">
           <input
