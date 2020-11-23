@@ -1,0 +1,5 @@
+mutation updateVideoViews($id: Int!) {
+  updateVideoViews(id: $id) {
+    id
+  }
+}

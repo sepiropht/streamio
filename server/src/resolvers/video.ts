@@ -88,6 +88,51 @@ export class VideoResolver {
 
     return result.raw[0];
   }
+  @Mutation(() => Video, { nullable: true })
+  async updateVideoViews(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Video | null> {
+    if (req.session.userId) {
+      const video = await Video.findOne(id);
+      console.log(req.session.userId && video?.creatorId);
+      if (video && video?.creatorId === req.session.userId) {
+        return video;
+      }
+    }
+    const result = await getConnection()
+      .createQueryBuilder()
+      .update(Video)
+      .set({ points: () => "points + 1" })
+      .where('id = :id and "creatorId" = :creatorId', {
+        id,
+        creatorId: req.session.userId || 1,
+      })
+      .returning("*")
+      .execute();
+
+    return result.raw[0];
+  }
+
+  @Mutation(() => Video, { nullable: true })
+  async updateVideoTitle(
+    @Arg("id", () => Int) id: number,
+    @Arg("title") title: string,
+    @Ctx() { req }: MyContext
+  ): Promise<Video | null> {
+    const result = await getConnection()
+      .createQueryBuilder()
+      .update(Video)
+      .set({ title })
+      .where('id = :id and "creatorId" = :creatorId', {
+        id,
+        creatorId: req.session.userId || 1,
+      })
+      .returning("*")
+      .execute();
+
+    return result.raw[0];
+  }
 
   @Mutation(() => Boolean)
   async deleteVideo(@Arg("id", () => Int) id: number): Promise<boolean> {

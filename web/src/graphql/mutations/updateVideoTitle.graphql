@@ -1,0 +1,6 @@
+mutation updateVideoTitle($id: Int!, $title: String!) {
+  updateVideoTitle(id: $id, title: $title) {
+    id
+    title
+  }
+}
