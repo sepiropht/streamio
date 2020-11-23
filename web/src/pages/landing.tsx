@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   List,
@@ -11,70 +10,23 @@ import {
 } from "@chakra-ui/core";
 import NextLink from "next/link";
 // import { isServer } from "../utils/isServer";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 // import { useApolloClient } from "@apollo/client";
-import axios from "axios";
-import s3 from "../utils/aws";
-import useLocalStorage from "../utils/useLocalStorage";
-import { useVideosQuery } from "../generated/graphql";
-import { v4 as uuidv4 } from "uuid";
-import { Video } from "../interfaces";
-import { useUploadVideoMutation } from "../generated/graphql";
+
 import { withApollo } from "../utils/withApollo";
 import { GiSpeedometer } from "react-icons/gi";
 interface LandingProps {}
 
 const Landing: React.FC<LandingProps> = ({}) => {
-  const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
-    "data",
-    []
-  );
-  const { data, error, loading, fetchMore, variables } = useVideosQuery({
-    variables: {
-      limit: 15,
-      cursor: null,
-    },
-    notifyOnNetworkStatusChange: true,
-  });
-
-  const [videos, setVideo] = useState<Video[]>(videoFromLocalStorage || []);
-  const [uploadVideo] = useUploadVideoMutation();
-
+  const router = useRouter();
   async function onChange(event: any) {
-    uploadAws(event.target.files[0]);
-    async function uploadAws(file: File) {
-      const suffix = "test";
-      const Bucket = `streamio/${suffix}`;
-      const Key = `${uuidv4()}.mp4`;
-      const { data } = await uploadVideo({
-        variables: {
-          input: {
-            title: file.name,
-            Key,
-            size: file.size,
-          },
-        },
-      });
-      const uploadParams = {
-        Bucket,
-        Key,
-        Body: file,
-      };
-
-      s3.upload(uploadParams, async (err: any, res: any) => {
-        if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
-        console.log(res);
-        const r = await axios.get(
-          `http://localhost:4000/processVideo/?id=${data?.uploadVideo.id}&key=${Key}`
-        );
-        console.log(r);
-        // Wait the end of upload to s3 before rendering the card
-        if (data) {
-          setVideo([...videos, { ...data?.uploadVideo }]);
-          setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
-        }
-      });
-    }
+    return;
+    const file = event.target.files[0];
+    router.push({ pathname: "/home", query: { file, name: "will" } });
+  }
+  async function onPaste(event: any) {
+    const url = event.clipboardData.getData("Text");
+    router.push({ pathname: "/home", query: { url } });
   }
   return (
     <Box
@@ -193,13 +145,18 @@ const Landing: React.FC<LandingProps> = ({}) => {
           marginBottom="90px"
           flexDirection={["column", "row", "row", "row"]}
         >
-          <FormControl display="none" bg="white">
+          <FormControl
+            onClick={() => router.push("/home")}
+            display="none"
+            bg="white"
+          >
             <input
               className="upload-input"
               type="file"
               name="file"
               placeholder="paste video url"
-              onChange={onChange}
+              disabled={true}
+              //onChange={onChange}
             />
           </FormControl>
           <Button
@@ -240,6 +197,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           >
             <Input
               variant="flushed"
+              onPaste={onPaste}
               textAlign="center"
               placeholder="Paste a video URL"
             />
