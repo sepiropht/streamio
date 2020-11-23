@@ -33,7 +33,6 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
         const { errors } = await updateVideoViewsMutation({
           variables: { id },
         });
-        console.log(errors);
         if (!errors) {
           setViews([...views, Video?.id]);
         }
@@ -90,7 +89,7 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
             </Box>
           </Box>
           <Box id="everything-but-video" bg="white">
-            <Box className="box has-title" marginTop="0px" maxWidth="100vw">
+            <Box className="box has-title" marginTop="50px" maxWidth="100vw">
               <Box
                 padding="12px"
                 textAlign="left"
@@ -101,8 +100,10 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
                 color="#444"
                 display="flex"
               >
-                <span id="title">{data.Video?.title} </span>
-                <span id="visits">{data.Video?.points} views</span>
+                <span id="title">{Video?.title} </span>
+                <span id="visits">
+                  {Video?.points} {Video?.points === 1 ? "view" : "views"}
+                </span>
               </Box>
 
               <Box
