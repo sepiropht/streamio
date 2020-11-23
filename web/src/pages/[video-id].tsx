@@ -3,8 +3,12 @@ import { Box } from "@chakra-ui/core";
 // import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 
 import NextLink from "next/link";
-import { useVideoQuery } from "../generated/graphql";
+import {
+  useVideoQuery,
+  useUpdateVideoViewsMutation,
+} from "../generated/graphql";
 import { withApollo } from "../utils/withApollo";
+import useLocalStorage from "../utils/useLocalStorage";
 
 interface VideoProps {
   Key: string;
@@ -18,8 +22,23 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
       id: parseInt(id, 10),
     },
   });
+  const [views, setViews] = useLocalStorage("views", []);
+  const [updateVideoViewsMutation] = useUpdateVideoViewsMutation();
   if (data) {
     const { Video } = data;
+    if (!views.includes(Video?.id) && Video) {
+      const id = parseInt(Video.id.toString(), 10);
+      (async () => {
+        setViews([...views, Video.id]);
+        const { errors } = await updateVideoViewsMutation({
+          variables: { id },
+        });
+        console.log(errors);
+        if (!errors) {
+          setViews([...views, Video?.id]);
+        }
+      })();
+    }
     if (Video?.isConvertionPending) {
       setTimeout(() => document.location.reload(), 1000);
     }
@@ -55,7 +74,14 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               right="0px;"
               bottom="0px;"
             >
-              <video controls autoPlay loop>
+              <video
+                controls
+                autoPlay
+                loop
+                poster={`http://localhost:4000/${Video?.key
+                  .split(".")
+                  .shift()}.jpg`}
+              >
                 <source
                   src={`http://localhost:4000/getVideo/?&key=${Key}`}
                   type="video/mp4"
