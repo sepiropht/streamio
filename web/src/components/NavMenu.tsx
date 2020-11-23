@@ -44,7 +44,7 @@ export const NavMenu: React.FC<NavMenuProps> = ({ name }) => {
             lineHeight={1.5}
           >
             <Box>MY SETTINGS</Box>
-            <NextLink href="/profile">
+            {/* <NextLink href="/profile">
               <Box
                 display="block"
                 padding="7px 10px"
@@ -56,7 +56,7 @@ export const NavMenu: React.FC<NavMenuProps> = ({ name }) => {
               >
                 My Profile
               </Box>
-            </NextLink>
+            </NextLink> */}
             <Box></Box>
             <Box borderTop="1px solid #eee">
               <Button
