@@ -1,19 +1,18 @@
 //import axios from "axios";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Layout } from "../components/Layout";
-import Link from "next/link";
 import { useUploadVideoMutation } from "../generated/graphql";
 import { Video } from "../interfaces";
 import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/core";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
 import { useVideosQuery } from "../generated/graphql";
 import { unionBy } from "lodash";
+import { useRouter } from "next/router";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
 import Modal from "react-modal";
@@ -34,6 +33,15 @@ interface card extends Video {
   upload?: any;
 }
 const Home = () => {
+  const router = useRouter();
+  useEffect(() => {
+    router.events.on("routeChangeComplete", () => {
+      const { url } = router.query;
+      if (url?.toString()) {
+        fetchUrl(url);
+      }
+    });
+  }, []);
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
     []
@@ -48,7 +56,7 @@ const Home = () => {
     notifyOnNetworkStatusChange: true,
   });
   console.log("SERVER", data);
-  const [videos, setVideo] = useState<card[]>([]);
+  const [videos, setVideo] = useState<card[]>(videoFromLocalStorage);
   const [uploadVideo] = useUploadVideoMutation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -63,6 +71,9 @@ const Home = () => {
 
   async function onPaste(e: any) {
     const url = e.clipboardData.getData("Text");
+    fetchUrl(url);
+  }
+  async function fetchUrl(url: string) {
     if (!validUrl.isWebUri(url)) {
       return;
     }
@@ -144,6 +155,7 @@ const Home = () => {
 
   useEffect(() => {
     //setVideoToRender(unionBy(videos, data?.videos.videos, "id"));
+    console.log("new video to local storage", videos);
     setVideosToLocalStorage(videos);
   }, [videos]);
 
