@@ -69,6 +69,9 @@ export const Card: React.FC<CardProps> = ({
       ws.onmessage = ({ data }) => {
         const res = JSON.parse(data);
         console.log(res, { cardKey: Key });
+        if (res.delete && res.key === Key) {
+          onDeletedCard(id);
+        }
         if (res.progress && res.Key && Key === res.Key) {
           setTask("Processing");
           setProgress(parseInt(res.progress.percent, 10));

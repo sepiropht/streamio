@@ -183,22 +183,38 @@ async function processVideo(client: any, key: string, url: string) {
   await changeStatus(true, key, false);
   client.send(JSON.stringify({ processing: true }));
   if (url) {
-    const { fileName } = await getVideoFromSocialMedia(url, key, client);
-    await getConnection()
-      .createQueryBuilder()
-      .update(Video)
-      .set({
-        isConvertionPending: false,
-        isAlreadyConvert: true,
-        title: fileName,
-      })
-      .where("key = :key", {
-        key,
-      })
-      .returning("*")
-      .execute();
+    try {
+      const { fileName } = await getVideoFromSocialMedia(url, key, client);
+
+      await getConnection()
+        .createQueryBuilder()
+        .update(Video)
+        .set({
+          isConvertionPending: false,
+          isAlreadyConvert: true,
+          title: fileName,
+        })
+        .where("key = :key", {
+          key,
+        })
+        .returning("*")
+        .execute();
+    } catch (err) {
+      await Video.delete({ key });
+      client.send(JSON.stringify({ delete: "true", key }));
+    }
   } else {
-    await convert(key, client);
-    await changeStatus(false, key, true);
+    try {
+      await convert(key, client);
+      await changeStatus(false, key, true);
+    } catch (err) {
+      await Video.delete({ key });
+      const uploadParams = {
+        Bucket: "streamio/test",
+        Key: key,
+      };
+      await s3.deleteObject(uploadParams).promise();
+      client.send(JSON.stringify({ delete: "true", key }));
+    }
   }
 }

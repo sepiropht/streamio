@@ -39,7 +39,7 @@ export default async (
               .videoCodec("libx264")
               .format("mp4")
               .save(filePath)
-
+              .on("error", (err) => reject(err))
               .on("end", async () => {
                 client.send(JSON.stringify({ done: "done", Key }));
                 await s3
