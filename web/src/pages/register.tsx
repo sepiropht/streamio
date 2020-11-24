@@ -18,7 +18,7 @@ interface registerProps {}
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
   const [videoFromLocalStorage] = useLocalStorage("data", []);
-  const videosId = videoFromLocalStorage.map((video: Video) => video.id);
+  const videosId = videoFromLocalStorage?.map((video: Video) => video.id);
   const [register] = useRegisterMutation();
   return (
     <Box

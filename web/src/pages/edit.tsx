@@ -26,7 +26,7 @@ const Edit = () => {
   const [Key, setState] = useState("");
   useEffect(() => {
     router.events.on("routeChangeComplete", () => {
-      if (router.query.Key) setState(router.query.Key);
+      if (router.query.Key) setState(router.query.Key as string);
     });
   }, []);
 
@@ -173,12 +173,12 @@ const Edit = () => {
                   <Box id="clip-controls-time">
                     <Box className="clip-controls-time-control">
                       <Input type="text" value={leftValue} />
-                      <Button></Button>
+                      <Button>provissoir</Button>
                     </Box>
                     <Box>to</Box>
                     <Box>
                       <Input type="text" value={rightValue} />
-                      <Button></Button>
+                      <Button>Provisoir</Button>
                     </Box>
                   </Box>
                 </Box>
