@@ -56,7 +56,7 @@ const Home = () => {
     },
     notifyOnNetworkStatusChange: true,
   });
-  console.log("SERVER", data);
+  //console.log("SERVER", data);
   const [videos, setVideo] = useState<card[]>(videoFromLocalStorage);
   const [uploadVideo] = useUploadVideoMutation();
 
@@ -67,7 +67,6 @@ const Home = () => {
 
   function closeModal() {
     setIsOpen(false);
-    console.log("CLOSE MODAL");
   }
 
   async function onPaste(e: any) {
@@ -161,7 +160,8 @@ const Home = () => {
   }, [videos]);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:4000");
+    const websocketPrefix = process.env.PROD ? "wss:" : "ws:";
+    ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
     ws.current.onopen = () => console.log("ws opened");
     ws.current.onclose = () => console.log("ws closed");
     // ws.current.onmessage = ({ data }) => {
@@ -180,10 +180,13 @@ const Home = () => {
           Key={key}
           upload={upload}
           ws={ws}
-          src={`http://localhost:4000/${key.split(".").shift()}.jpg`}
+          src={`${process.env.NEXT_PUBLIC_URL}${key.split(".").shift()}.jpg`}
           views={points}
           link={`/${key.slice(0, 7)}${id}`}
-          videoUrl={`http://localhost:4000/getVideo/?&key=${key.slice(0, 7)}`}
+          videoUrl={`${process.env.NEXT_PUBLIC_URL}getVideo/?&key=${key.slice(
+            0,
+            7
+          )}`}
           title={title}
           onDeletedCard={(currentId: number) => {
             deleteVideoMutation({ variables: { id: currentId } });
