@@ -1,4 +1,8 @@
+FROM jbergknoff/youtube-dl
+
 FROM node:14
+
+COPY --from=0 / /
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -10,6 +14,7 @@ COPY package.json ./
 COPY yarn.lock ./
 
 RUN yarn
+
 
 COPY . .
 COPY .env.production .env
