@@ -7,7 +7,7 @@ import { createUploadLink } from "apollo-upload-client";
 const createClient = (ctx: NextPageContext) =>
   new ApolloClient({
     link: createUploadLink({
-      uri: process.env.NEXT_PUBLIC_API_URL as string,
+      uri: (process.env.NEXT_PUBLIC_URL as string) + "graphql",
       credentials: "include",
       headers: {
         cookie:

@@ -77,12 +77,12 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
                 controls
                 autoPlay
                 loop
-                poster={`http://localhost:4000/${Video?.key
+                poster={`${process.env.NEXT_PUBLIC_URL}${Video?.key
                   .split(".")
                   .shift()}.jpg`}
               >
                 <source
-                  src={`http://localhost:4000/getVideo/?&key=${Key}`}
+                  src={`${process.env.NEXT_PUBLIC_URL}getVideo/?&key=${Key}`}
                   type="video/mp4"
                 ></source>
               </video>

@@ -60,7 +60,7 @@ export const Card: React.FC<CardProps> = ({
         }).on(
           "httpUploadProgress",
           ({ loaded, total }: { loaded: number; total: number }) => {
-            setProgress((loaded / total) * 100);
+            setProgress(loaded === total ? 100 : (loaded / total) * 100);
           }
         ) && setTask("Uploading")
       : "";

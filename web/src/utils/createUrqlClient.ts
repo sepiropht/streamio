@@ -82,7 +82,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   }
 
   return {
-    url: process.env.NEXT_PUBLIC_API_URL as string,
+    url: (process.env.NEXT_PUBLIC_URL as string) + "graphql",
     fetchOptions: {
       credentials: "include" as const,
       headers: cookie
