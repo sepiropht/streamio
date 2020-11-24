@@ -37,9 +37,7 @@ const Home = () => {
   useEffect(() => {
     router.events.on("routeChangeComplete", () => {
       const { url } = router.query;
-      if (url?.toString()) {
-        fetchUrl(url);
-      }
+      fetchUrl(url as string);
     });
   }, []);
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
@@ -160,7 +158,7 @@ const Home = () => {
   }, [videos]);
 
   useEffect(() => {
-    const websocketPrefix = process.env.PROD ? "wss:" : "ws:";
+    const websocketPrefix = process.env.PROD === "production" ? "wss:" : "ws:";
     ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
     ws.current.onopen = () => console.log("ws opened");
     ws.current.onclose = () => console.log("ws closed");
