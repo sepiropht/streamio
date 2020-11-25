@@ -158,7 +158,8 @@ const Home = () => {
   }, [videos]);
 
   useEffect(() => {
-    const websocketPrefix = process.env.PROD === "production" ? "wss:" : "ws:";
+    const websocketPrefix =
+      process.env.NEXT_PUBLIC_PROD === "production" ? "wss:" : "ws:";
     ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
     ws.current.onopen = () => console.log("ws opened");
     ws.current.onclose = () => console.log("ws closed");
