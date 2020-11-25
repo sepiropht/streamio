@@ -77,9 +77,9 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
                 controls
                 autoPlay
                 loop
-                poster={`${process.env.NEXT_PUBLIC_URL}${Video?.key
-                  .split(".")
-                  .shift()}.jpg`}
+                poster={`${
+                  process.env.NEXT_PUBLIC_URL
+                }images/${Video?.key.split(".").shift()}.jpg`}
               >
                 <source
                   src={`${process.env.NEXT_PUBLIC_URL}getVideo/?&key=${Key}`}
