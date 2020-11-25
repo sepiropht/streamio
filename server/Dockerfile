@@ -4,6 +4,9 @@ FROM node:14
 
 COPY --from=0 / /
 
+
+RUN useradd -ms /bin/bash node
+
 # Create app directory
 WORKDIR /usr/src/app
 
