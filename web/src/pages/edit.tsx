@@ -104,16 +104,9 @@ const Edit = () => {
                       backgroundColor: "#000",
                     }}
                     preload="metadata"
-                    poster={`http://localhost:4000/${Key.split(
-                      "."
-                    ).shift()}.jpg`}
+                    poster={`/images/${Key.split(".").shift()}.jpg`}
                   >
-                    <source
-                      src={`http://localhost:4000/getVideo/?&key=${Key.slice(
-                        0,
-                        7
-                      )}`}
-                    />
+                    <source src={`/getVideo/?&key=${Key.slice(0, 7)}`} />
                   </video>
                 </Box>
               </Box>
