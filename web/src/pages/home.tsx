@@ -179,7 +179,9 @@ const Home = () => {
           Key={key}
           upload={upload}
           ws={ws}
-          src={`${process.env.NEXT_PUBLIC_URL}$images/{key.split(".").shift()}.jpg`}
+          src={`${process.env.NEXT_PUBLIC_URL}images/${key
+            .split(".")
+            .shift()}.jpg`}
           views={points}
           link={`/${key.slice(0, 7)}${id}`}
           videoUrl={`${process.env.NEXT_PUBLIC_URL}getVideo/?&key=${key.slice(
