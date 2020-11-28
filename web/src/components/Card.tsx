@@ -36,11 +36,12 @@ export const Card: React.FC<CardProps> = ({
   videoUrl,
   Key,
   upload,
-  progress,
 }) => {
   const [isHover, setHover] = useState(false);
   const [isVisible, showModal] = useState(false);
-  const [currentProgress, setProgress] = useState(progress);
+  const [currentProgress, setProgress] = useState<number | undefined>(
+    undefined
+  );
   const [task, setTask] = useState("");
   const router = useRouter();
   const [video, setVideoUrl] = useState("");
@@ -76,7 +77,6 @@ export const Card: React.FC<CardProps> = ({
               key: Key,
             })
           );
-          setProgress(1);
         }).on(
           "httpUploadProgress",
           ({ loaded, total }: { loaded: number; total: number }) => {
@@ -113,8 +113,9 @@ export const Card: React.FC<CardProps> = ({
       setVideoUrl(videoUrl);
       if (imageElement?.current) imageElement.current.src = src;
     }
-    if (!progress) setCard();
+    if (!useWebSocket) setCard();
   }, []);
+
   interface MenuCardProps {
     show: boolean;
   }
@@ -159,16 +160,6 @@ export const Card: React.FC<CardProps> = ({
         videoUrl={video}
         close={showModal}
       ></ModalPlayer>
-      {/* <Spinner
-        style={{ display: isCardLoad ? "none" : "block" }}
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="blue.500"
-        size="xl"
-      >
-        Still Processing the video...
-      </Spinner> */}
       <Box
         bg="white"
         border="1px solid #e8e8e8"

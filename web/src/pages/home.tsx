@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
 import Modal from "react-modal";
+
 Modal.setAppElement("#__next");
 
 const customStyles = {
@@ -56,7 +57,14 @@ const Home = () => {
     notifyOnNetworkStatusChange: true,
   });
   //console.log("SERVER", data);
-  const [videos, setVideo] = useState<card[]>(videoFromLocalStorage);
+  const [videos, setVideo] = useState<card[]>(
+    videoFromLocalStorage.map((video: any) => {
+      return {
+        ...video,
+        useWebSocket: false,
+      };
+    })
+  );
   const [uploadVideo] = useUploadVideoMutation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -101,7 +109,6 @@ const Home = () => {
           ...data?.uploadVideo,
           useWebSocket: true,
           socialUrl,
-          progress: 0.1,
         },
         ...videos,
       ]);
@@ -143,7 +150,6 @@ const Home = () => {
           {
             ...data?.uploadVideo,
             useWebSocket: true,
-            progress: 0.1,
             upload,
           },
           ...videos,
@@ -161,11 +167,10 @@ const Home = () => {
   }, [videos]);
 
   const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
-    ({ id, title, points, key, progress, useWebSocket, upload, socialUrl }) => {
+    ({ id, title, points, key, useWebSocket, upload, socialUrl }) => {
       return (
         <Card
           id={id}
-          progress={progress}
           key={key}
           Key={key}
           upload={upload}
