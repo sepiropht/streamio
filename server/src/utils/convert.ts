@@ -28,7 +28,7 @@ export default async (
               Bucket: "streamio/test",
               Key: newKey,
             };
-            const filePath = `/tmp/${name}`;
+            const filePath = `/tmp/${newKey}`;
             await generateThumbnail(videoTempPath, name, client);
             ffmpeg(videoTempPath)
               .on("progress", (progress) => {
@@ -39,7 +39,10 @@ export default async (
               .videoCodec("libx264")
               .format("mp4")
               .save(filePath)
-              .on("error", (err) => reject(err))
+              .on("error", (err) => {
+                console.log(err);
+                reject(err);
+              })
               .on("end", async () => {
                 client.send(JSON.stringify({ done: "done", Key }));
                 await s3
