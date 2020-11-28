@@ -246,7 +246,7 @@ export const Card: React.FC<CardProps> = ({
               <Box
                 cursor="pointer"
                 color="#007bff"
-              >{`https://streamio.com${link}`}</Box>
+              >{`https://sepiropht.com${link}`}</Box>
             </NextLink>
             <Button
               size="xs"
@@ -263,7 +263,7 @@ export const Card: React.FC<CardProps> = ({
               position="relative"
               top="-2px"
               right={0}
-              onClick={() => copyToClipboard(`https://streamio.com${link}`)}
+              onClick={() => copyToClipboard(`https://sepiropht.com${link}`)}
             >
               <Box marginRight="10px" fontSize={11}>
                 <ImShare2></ImShare2>

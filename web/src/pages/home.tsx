@@ -58,7 +58,7 @@ const Home = () => {
   });
   //console.log("SERVER", data);
   const [videos, setVideo] = useState<card[]>(
-    videoFromLocalStorage.map((video: any) => {
+    (videoFromLocalStorage || []).map((video: any) => {
       return {
         ...video,
         useWebSocket: false,
