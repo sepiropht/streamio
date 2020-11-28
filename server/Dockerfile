@@ -1,9 +1,9 @@
-FROM jbergknoff/youtube-dl
-
+FROM jrottenberg/ffmpeg:3.3-alpine
+FROM wernight/youtube-dl
 FROM node:14
 
 COPY --from=0 / /
-
+COPY --from=1 / /
 
 RUN useradd -ms /bin/bash node
 

@@ -14,12 +14,12 @@ export default async (videoPath: string, key: string, client: any) => {
         .on("end", function () {
           console.log("Screenshots taken");
         })
-        .screenshots({ count: 1, folder: key })
+        .screenshots({ count: 1, folder: "/tmp/" + key })
         .on("end", (data: any) => {
           console.log(data);
-          fs.createReadStream(`${key}/tn.png`).pipe(
+          fs.createReadStream(`/tmp/${key}/tn.png`).pipe(
             fs.createWriteStream(`images/${key}.jpg`).on("close", () => {
-              fs.rmdirSync(key, { recursive: true });
+              //fs.rmdirSync(key, { recursive: true });
               console.log("IMAGE READY");
               client.send(
                 JSON.stringify({ imageReady: true, Key: key + ".mp4" })
