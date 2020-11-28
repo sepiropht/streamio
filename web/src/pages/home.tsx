@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
 import Modal from "react-modal";
+
 Modal.setAppElement("#__next");
 
 const customStyles = {
@@ -29,8 +30,9 @@ const customStyles = {
   },
 };
 interface card extends Video {
-  ws?: WebSocket;
+  useWebSocket?: boolean;
   upload?: any;
+  socialUrl?: any;
 }
 const Home = () => {
   const router = useRouter();
@@ -45,7 +47,7 @@ const Home = () => {
     []
   );
   const [deleteVideoMutation] = useDeleteVideoMutation();
-  const ws = useRef<WebSocket>();
+
   const urlUpload = useRef<HTMLInputElement>(null);
   const { data, error, loading, fetchMore, variables } = useVideosQuery({
     variables: {
@@ -55,7 +57,14 @@ const Home = () => {
     notifyOnNetworkStatusChange: true,
   });
   //console.log("SERVER", data);
-  const [videos, setVideo] = useState<card[]>(videoFromLocalStorage);
+  const [videos, setVideo] = useState<card[]>(
+    (videoFromLocalStorage || []).map((video: any) => {
+      return {
+        ...video,
+        useWebSocket: false,
+      };
+    })
+  );
   const [uploadVideo] = useUploadVideoMutation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -86,22 +95,24 @@ const Home = () => {
       },
     });
     if (data) {
+      const socialUrl = (ws: any) =>
+        ws?.current?.send(
+          JSON.stringify({
+            processVideo: "",
+            key: Key,
+            url,
+          })
+        );
+
       setVideo([
         {
           ...data?.uploadVideo,
-          ws: ws.current,
-          progress: 0.1,
+          useWebSocket: true,
+          socialUrl,
         },
         ...videos,
       ]);
 
-      ws?.current?.send(
-        JSON.stringify({
-          processVideo: "",
-          key: Key,
-          url,
-        })
-      );
       setVideosToLocalStorage([...videos, { ...data?.uploadVideo }]);
     }
   }
@@ -138,8 +149,7 @@ const Home = () => {
         setVideo([
           {
             ...data?.uploadVideo,
-            ws: ws.current,
-            progress: 0.1,
+            useWebSocket: true,
             upload,
           },
           ...videos,
@@ -152,33 +162,20 @@ const Home = () => {
   }, [data?.videos.videos]);
 
   useEffect(() => {
-    //setVideoToRender(unionBy(videos, data?.videos.videos, "id"));
     console.log("new video to local storage", videos);
     setVideosToLocalStorage(videos);
   }, [videos]);
 
-  useEffect(() => {
-    const websocketPrefix =
-      process.env.NEXT_PUBLIC_PROD === "production" ? "wss:" : "ws:";
-    ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
-    ws.current.onopen = () => console.log("ws opened");
-    ws.current.onclose = () => console.log("ws closed");
-    // ws.current.onmessage = ({ data }) => {
-    //   console.log(data);
-    // };
-
-    return () => ws.current?.close();
-  }, []);
   const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
-    ({ id, title, points, key, progress, ws, upload }) => {
+    ({ id, title, points, key, useWebSocket, upload, socialUrl }) => {
       return (
         <Card
           id={id}
-          progress={progress}
           key={key}
           Key={key}
           upload={upload}
-          ws={ws}
+          socialUrl={socialUrl}
+          useWebSocket={useWebSocket}
           src={`${process.env.NEXT_PUBLIC_URL}${key.split(".").shift()}.jpg`}
           views={points}
           link={`/${key.slice(0, 7)}${id}`}
