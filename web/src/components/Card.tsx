@@ -8,13 +8,15 @@ import { RiDeleteBinFill } from "react-icons/ri";
 import { useDeleteVideoMutation } from "../generated/graphql";
 import { useCopyToClipboard } from "react-use";
 import { useRouter } from "next/router";
+
 interface CardProps {
   Key: string;
   src: string;
-  ws?: WebSocket;
+  useWebSocket?: boolean;
   views: number;
   link: string;
   title: string;
+  socialUrl?: any;
   upload?: any;
   onDeletedCard: (currentId: number) => void;
   videoUrl: string;
@@ -26,13 +28,14 @@ export const Card: React.FC<CardProps> = ({
   id,
   src,
   views,
+  useWebSocket,
   onDeletedCard,
+  socialUrl,
   title,
   link,
   videoUrl,
   Key,
   upload,
-  ws,
   progress,
 }) => {
   const [isHover, setHover] = useState(false);
@@ -45,12 +48,29 @@ export const Card: React.FC<CardProps> = ({
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
   const [_, copyToClipboard] = useCopyToClipboard();
+  const ws = useRef<WebSocket>();
+
+  useEffect(() => {
+    if (!useWebSocket) {
+      return;
+    }
+    const websocketPrefix =
+      process.env.NEXT_PUBLIC_PROD === "production" ? "wss:" : "ws:";
+    ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
+    ws.current.onclose = () => console.log("ws closed");
+    ws.current.onopen = () => socialUrl && socialUrl(ws);
+    // ws.current.onmessage = ({ data }) => {
+    //   console.log(data);
+    // };
+
+    return () => ws.current?.close();
+  }, []);
 
   useEffect(() => {
     upload
       ? upload(async (err: any, res: any) => {
           if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
-          ws?.send(
+          ws?.current?.send(
             JSON.stringify({
               processVideo: "",
               key: Key,
@@ -65,9 +85,10 @@ export const Card: React.FC<CardProps> = ({
         ) && setTask("Uploading")
       : "";
   }, []);
+
   useEffect(() => {
-    if (ws)
-      ws.onmessage = ({ data }) => {
+    if (ws.current)
+      ws.current.onmessage = ({ data }) => {
         const res = JSON.parse(data);
         if (res.delete && res.key === Key) {
           onDeletedCard(id);
