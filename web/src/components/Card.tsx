@@ -8,13 +8,15 @@ import { RiDeleteBinFill } from "react-icons/ri";
 import { useDeleteVideoMutation } from "../generated/graphql";
 import { useCopyToClipboard } from "react-use";
 import { useRouter } from "next/router";
+
 interface CardProps {
   Key: string;
   src: string;
-  ws?: WebSocket;
+  useWebSocket?: boolean;
   views: number;
   link: string;
   title: string;
+  socialUrl?: any;
   upload?: any;
   onDeletedCard: (currentId: number) => void;
   videoUrl: string;
@@ -26,18 +28,20 @@ export const Card: React.FC<CardProps> = ({
   id,
   src,
   views,
+  useWebSocket,
   onDeletedCard,
+  socialUrl,
   title,
   link,
   videoUrl,
   Key,
   upload,
-  ws,
-  progress,
 }) => {
   const [isHover, setHover] = useState(false);
   const [isVisible, showModal] = useState(false);
-  const [currentProgress, setProgress] = useState(progress);
+  const [currentProgress, setProgress] = useState<number | undefined>(
+    undefined
+  );
   const [task, setTask] = useState("");
   const router = useRouter();
   const [video, setVideoUrl] = useState("");
@@ -45,18 +49,34 @@ export const Card: React.FC<CardProps> = ({
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
   const [_, copyToClipboard] = useCopyToClipboard();
+  const ws = useRef<WebSocket>();
+
+  useEffect(() => {
+    if (!useWebSocket) {
+      return;
+    }
+    const websocketPrefix =
+      process.env.NEXT_PUBLIC_PROD === "production" ? "wss:" : "ws:";
+    ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
+    ws.current.onclose = () => console.log("ws closed");
+    ws.current.onopen = () => socialUrl && socialUrl(ws);
+    // ws.current.onmessage = ({ data }) => {
+    //   console.log(data);
+    // };
+
+    return () => ws.current?.close();
+  }, []);
 
   useEffect(() => {
     upload
       ? upload(async (err: any, res: any) => {
           if (err) return console.log("EEEEEEEEEEEEEEEEEEEEERRR", err);
-          ws?.send(
+          ws?.current?.send(
             JSON.stringify({
               processVideo: "",
               key: Key,
             })
           );
-          setProgress(1);
         }).on(
           "httpUploadProgress",
           ({ loaded, total }: { loaded: number; total: number }) => {
@@ -65,9 +85,10 @@ export const Card: React.FC<CardProps> = ({
         ) && setTask("Uploading")
       : "";
   }, []);
+
   useEffect(() => {
-    if (ws)
-      ws.onmessage = ({ data }) => {
+    if (ws.current)
+      ws.current.onmessage = ({ data }) => {
         const res = JSON.parse(data);
         if (res.delete && res.key === Key) {
           onDeletedCard(id);
@@ -92,8 +113,9 @@ export const Card: React.FC<CardProps> = ({
       setVideoUrl(videoUrl);
       if (imageElement?.current) imageElement.current.src = src;
     }
-    if (!progress) setCard();
+    if (!useWebSocket) setCard();
   }, []);
+
   interface MenuCardProps {
     show: boolean;
   }
@@ -138,16 +160,6 @@ export const Card: React.FC<CardProps> = ({
         videoUrl={video}
         close={showModal}
       ></ModalPlayer>
-      {/* <Spinner
-        style={{ display: isCardLoad ? "none" : "block" }}
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="blue.500"
-        size="xl"
-      >
-        Still Processing the video...
-      </Spinner> */}
       <Box
         bg="white"
         border="1px solid #e8e8e8"
@@ -234,7 +246,7 @@ export const Card: React.FC<CardProps> = ({
               <Box
                 cursor="pointer"
                 color="#007bff"
-              >{`https://streamio.com${link}`}</Box>
+              >{`https://sepiropht.com${link}`}</Box>
             </NextLink>
             <Button
               size="xs"
@@ -251,7 +263,7 @@ export const Card: React.FC<CardProps> = ({
               position="relative"
               top="-2px"
               right={0}
-              onClick={() => copyToClipboard(`https://streamio.com${link}`)}
+              onClick={() => copyToClipboard(`https://sepiropht.com${link}`)}
             >
               <Box marginRight="10px" fontSize={11}>
                 <ImShare2></ImShare2>
