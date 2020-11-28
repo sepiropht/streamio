@@ -27,7 +27,12 @@ export default async (
 
     const filePath = `/tmp/${key}`;
     const process = async () => {
-      await generateThumbnail(videoTempPath, name, client);
+      try {
+        await generateThumbnail(videoTempPath, name, client);
+      } catch (err) {
+        console.log(err);
+        console.log("il n' aura pas d'image");
+      }
       ffmpeg(videoTempPath)
         .on("progress", (progress: any) => {
           console.log("progress", JSON.stringify(progress));
