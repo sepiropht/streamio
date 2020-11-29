@@ -1,4 +1,4 @@
-import { Box, Link, Flex, Button, Heading } from "@chakra-ui/core";
+import { Box, Link, Flex, Button, Heading } from "@chakra-ui/react";
 // import NextLink from "next/link";
 import { useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { Box, Button, Link, Flex } from "@chakra-ui/core";
+import { Box, Button, Link, Flex } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
 import { useLoginMutation, MeQuery, MeDocument } from "../generated/graphql";
@@ -99,7 +99,7 @@ const Login: React.FC<{}> = ({}) => {
                   mt={4}
                   type="submit"
                   isLoading={isSubmitting}
-                  variantColor="teal"
+                  colorScheme="teal"
                   width="100%"
                 >
                   login

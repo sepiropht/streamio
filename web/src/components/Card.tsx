@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Textarea, Button } from "@chakra-ui/core";
+import { Box, Flex, Image, Textarea, Button } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import NextLink from "next/link";
 import { ImShare2 } from "react-icons/im";
@@ -290,9 +290,12 @@ export const Card: React.FC<CardProps> = ({
             variant="link"
             display="flex"
             justifyContent="space-between"
-            onClick={() => router.push({ pathname: "/edit", query: { Key } })}
+            onClick={() => showMenu(isMenuShow ? false : true)}
           >
-            Edit
+            <Box marginRight="8px">
+              <BsThreeDots></BsThreeDots>
+            </Box>
+            More
           </Button>
           <Button
             padding="0 15"
@@ -304,12 +307,9 @@ export const Card: React.FC<CardProps> = ({
             variant="link"
             display="flex"
             justifyContent="space-between"
-            onClick={() => showMenu(isMenuShow ? false : true)}
+            onClick={() => router.push({ pathname: "/edit", query: { Key } })}
           >
-            <Box marginRight="8px">
-              <BsThreeDots></BsThreeDots>
-            </Box>
-            More
+            Edit
           </Button>
         </Box>
         <MenuCard show={isMenuShow}></MenuCard>

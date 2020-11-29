@@ -7,7 +7,7 @@ import {
   Button,
   FormControl,
   Input,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 // import { isServer } from "../utils/isServer";
 import { useRouter } from "next/router";
@@ -77,7 +77,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           >
             <NextLink href="/#features">
               <Box
-                font-size="16px"
+                fontSize="16px"
                 color="#2c2c2c"
                 margin="0 10px"
                 display={["none", "block", "block", "block"]}
@@ -168,7 +168,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
             display="flex"
             justifyContent="space-around"
             alignItems="center"
-            font-size="16px"
+            fontSize="16px"
             minW="172px"
             margin="20px"
             border="none"

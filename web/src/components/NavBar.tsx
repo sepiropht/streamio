@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Link, Flex, Button, Heading } from "@chakra-ui/core";
+import { Box, Link, Flex, Button, Heading } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
@@ -102,9 +102,9 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     >
       <Flex flex={1} m="auto" justifyContent="space-between">
         <NextLink href="/">
-          <Link>
-            <Heading>Streamio</Heading>
-          </Link>
+          <Heading>
+            <a>Sepiropht</a>
+          </Heading>
         </NextLink>
         <Box ml={"auto"}>{body}</Box>
       </Flex>
