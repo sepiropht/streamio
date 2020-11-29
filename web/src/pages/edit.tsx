@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Layout } from "../components/Layout";
 
-import {} from "@chakra-ui/core";
+import {} from "@chakra-ui/react";
 import { withApollo } from "../utils/withApollo";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { FaPause } from "react-icons/fa";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
@@ -28,13 +28,16 @@ const Edit = () => {
     router.events.on("routeChangeComplete", () => {
       if (router.query.Key) setState(router.query.Key as string);
     });
+    return () => {
+      router.events.off("routeChangeError", () => console.log("buy edit"));
+    };
   }, []);
 
   return (
     <Layout>
       <Box
         color="#748490"
-        font-size="14px"
+        fontSize="14px"
         //bg="#f1f1f1"
         flex="1 1"
         margin="0 auto"
@@ -104,9 +107,15 @@ const Edit = () => {
                       backgroundColor: "#000",
                     }}
                     preload="metadata"
-                    poster={`${Key.split(".").shift()}.jpg`}
+                    poster={`${process.env.NEXT_PUBLIC_URL}${Key.split(
+                      "."
+                    ).shift()}.jpg`}
                   >
-                    <source src={`/getVideo/?&key=${Key.slice(0, 7)}`} />
+                    <source
+                      src={`${
+                        process.env.NEXT_PUBLIC_URL
+                      }getVideo/?&key=${Key.slice(0, 7)}`}
+                    />
                   </video>
                 </Box>
               </Box>
@@ -119,15 +128,16 @@ const Edit = () => {
                 margin="10px 0"
               >
                 <Box>
-                  <Flex justifyContent="space-between">
+                  <Flex>
                     <Box
                       userSelect="none"
-                      padding="15px 30px"
-                      width="45%"
+                      padding="15px 0px"
+                      width="100%"
                       margin="auto auto 5px"
                     >
                       <Slider
                         defaultValue={0}
+                        isReversed={true}
                         onChange={(value: number) => {
                           console.log(value);
                           tooglePause(false);
@@ -143,8 +153,8 @@ const Edit = () => {
                     </Box>
                     <Box
                       userSelect="none"
-                      padding="15px 30px"
-                      width="45%"
+                      padding="15px 0"
+                      width="100%"
                       margin="auto auto 5px"
                     >
                       <Slider

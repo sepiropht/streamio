@@ -4,7 +4,7 @@ import { Wrapper } from "../../components/Wrapper";
 import { Formik, Form } from "formik";
 import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../../components/InputField";
-import { Box, Button, Link, Flex } from "@chakra-ui/core";
+import { Box, Button, Link, Flex } from "@chakra-ui/react";
 import {
   useChangePasswordMutation,
   MeDocument,
@@ -77,7 +77,7 @@ const ChangePassword: NextPage = () => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              variantColor="teal"
+              colorScheme="teal"
             >
               change password
             </Button>
