@@ -102,9 +102,9 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     >
       <Flex flex={1} m="auto" justifyContent="space-between">
         <NextLink href="/">
-          <Heading>
-            <a>Sepiropht</a>
-          </Heading>
+          <Link>
+            <Heading>Streamio</Heading>
+          </Link>
         </NextLink>
         <Box ml={"auto"}>{body}</Box>
       </Flex>

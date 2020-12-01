@@ -45,7 +45,7 @@ export const Card: React.FC<CardProps> = ({
   const [task, setTask] = useState("");
   const router = useRouter();
   const [video, setVideoUrl] = useState("");
-  const imageElement = useRef<HTMLImageElement>();
+  const imageElement = useRef<HTMLImageElement>(null);
   const [isMenuShow, showMenu] = useState(false);
   const [deleteVideo] = useDeleteVideoMutation();
   const [_, copyToClipboard] = useCopyToClipboard();
@@ -60,12 +60,30 @@ export const Card: React.FC<CardProps> = ({
     ws.current = new WebSocket(websocketPrefix + process.env.NEXT_PUBLIC_URL);
     ws.current.onclose = () => console.log("ws closed");
     ws.current.onopen = () => socialUrl && socialUrl(ws);
+    ws.current.onmessage = ({ data }) => {
+      const res = JSON.parse(data);
+      if (res.delete && res.key === Key) {
+        onDeletedCard(id);
+      }
+      if (res.progress && res.Key && Key === res.Key) {
+        setTask("Processing");
+        setProgress(parseInt(res.progress.percent, 10));
+      }
+
+      if (res.imageReady && res.Key === Key) {
+        if (imageElement?.current) imageElement.current.src = src;
+      }
+      if (res.done && Key === res.Key) {
+        setProgress(undefined);
+        setVideoUrl(videoUrl);
+      }
+    };
     // ws.current.onmessage = ({ data }) => {
     //   console.log(data);
     // };
 
     return () => ws.current?.close();
-  }, []);
+  }, [useWebSocket]);
 
   useEffect(() => {
     upload
@@ -84,28 +102,6 @@ export const Card: React.FC<CardProps> = ({
           }
         ) && setTask("Uploading")
       : "";
-  }, []);
-
-  useEffect(() => {
-    if (ws.current)
-      ws.current.onmessage = ({ data }) => {
-        const res = JSON.parse(data);
-        if (res.delete && res.key === Key) {
-          onDeletedCard(id);
-        }
-        if (res.progress && res.Key && Key === res.Key) {
-          setTask("Processing");
-          setProgress(parseInt(res.progress.percent, 10));
-        }
-
-        if (res.imageReady && res.Key === Key) {
-          if (imageElement?.current) imageElement.current.src = src;
-        }
-        if (res.done && Key === res.Key) {
-          setProgress(undefined);
-          setVideoUrl(videoUrl);
-        }
-      };
   }, []);
 
   useEffect(() => {

@@ -42,14 +42,10 @@ interface card extends Video {
   upload?: any;
   socialUrl?: any;
 }
+
 const Home = () => {
   const router = useRouter();
-  useEffect(() => {
-    router.events.on("routeChangeComplete", () => {
-      const { url } = router.query;
-      fetchUrl(url as string);
-    });
-  }, []);
+
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
     []
@@ -73,6 +69,7 @@ const Home = () => {
       };
     })
   );
+
   const [uploadVideo] = useUploadVideoMutation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -166,13 +163,50 @@ const Home = () => {
     }
   }
   useEffect(() => {
+    router.events.on("routeChangeComplete", () => {
+      const { url } = router.query;
+      url && fetchUrl(url as string);
+      //console.log(router.query);
+    });
+    return () => {
+      router.events.off("routeChangeError", () => console.log("buy edit"));
+    };
+  }, []);
+
+  useEffect(() => {
     setVideo(unionBy(videos, data?.videos.videos, "id"));
   }, [data?.videos.videos]);
 
   useEffect(() => {
-    console.log("new video to local storage", videos);
     setVideosToLocalStorage(videos);
   }, [videos]);
+
+  const { Key, start, duration } = router.query;
+  useEffect(() => {
+    if (start && duration) {
+      console.log({ start, duration });
+      const socialUrl = (ws: any) =>
+        ws?.current?.send(
+          JSON.stringify({
+            processVideo: "",
+            key: Key,
+            duration: { start, duration },
+          })
+        );
+      const newSet = videos.map((video) => {
+        if (video.key === Key) {
+          video.useWebSocket = true;
+          video.socialUrl = socialUrl;
+          return {
+            ...video,
+          };
+        }
+        return video;
+      });
+      console.log({ newSet });
+      setVideo(newSet);
+    }
+  }, [start, duration]);
 
   const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
     ({ id, title, points, key, useWebSocket, upload, socialUrl }) => {
