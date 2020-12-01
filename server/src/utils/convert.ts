@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default async (
   Key: string,
+  duration: any,
   client: any
 ): Promise<{ oldKey: string; newKey: string }> => {
   return new Promise(async (resolve, reject) => {
@@ -29,8 +30,15 @@ export default async (
               Key: newKey,
             };
             const filePath = `/tmp/${newKey}`;
-            await generateThumbnail(videoTempPath, name, client);
-            ffmpeg(videoTempPath)
+            duration
+              ? ""
+              : await generateThumbnail(videoTempPath, name, client);
+            (duration
+              ? ffmpeg(videoTempPath)
+                  .setStartTime(duration.start)
+                  .duration(duration.duration)
+              : ffmpeg(videoTempPath)
+            )
               .on("progress", (progress) => {
                 console.log("progress", JSON.stringify(progress));
                 client.send(JSON.stringify({ progress, Key }));

@@ -48,8 +48,8 @@ const Landing: React.FC<LandingProps> = ({}) => {
           justifyContent="space-between"
           border="none"
           flexWrap="wrap"
-          line-height="44px"
-          flex-direction="row"
+          lineHeight="44px"
+          flexDirection="row"
           width="100%"
         >
           <ListItem
@@ -161,12 +161,6 @@ const Landing: React.FC<LandingProps> = ({}) => {
           })}
           marginTop="70px"
           marginBottom="90px"
-          flexDirection={createBreakpoints({
-            sm: "column",
-            md: "row",
-            lg: "row",
-            xl: "row",
-          })}
         >
           <FormControl
             onClick={() => router.push("/home")}
