@@ -284,7 +284,7 @@ export const Card: React.FC<CardProps> = ({
             lineHeight="24px;"
             fontSize="13px"
             variant="link"
-            display="flex"
+            display={!currentProgress ? "flex" : "none"}
             justifyContent="space-between"
             onClick={() => showMenu(isMenuShow ? false : true)}
           >
@@ -297,11 +297,11 @@ export const Card: React.FC<CardProps> = ({
             padding="0 15"
             fontWeight={600}
             borderRadius="3px"
+            display={!currentProgress ? "flex" : "none"}
             height="26px"
             lineHeight="24px;"
             fontSize="13px"
             variant="link"
-            display="flex"
             justifyContent="space-between"
             onClick={() => router.push({ pathname: "/edit", query: { Key } })}
           >
