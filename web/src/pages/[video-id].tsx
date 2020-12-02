@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 // import NextLink from "next/link";
 // import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 
@@ -45,13 +45,14 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
     return Key && !Video?.isConvertionPending ? (
       <Box
         minHeight="100% !important"
-        margin=""
+        margin="0 auto"
         marginBottom="-50px !important"
-        width="100%"
+        maxWidth="500px"
         padding="0px"
         overflowX="hidden"
         lineHeight="1.43"
         textAlign="center"
+        boxShadow="0 1px 3px black"
       >
         <Box
           maxWidth="556.444px"
@@ -72,6 +73,7 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               left="0px"
               right="0px;"
               bottom="0px;"
+              height="50px"
             >
               <video
                 controls
@@ -88,42 +90,44 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               </video>
             </Box>
           </Box>
-          <Box id="everything-but-video" bg="white">
-            <Box className="box has-title" marginTop="50px" maxWidth="100vw">
-              <Box
-                padding="12px"
-                textAlign="left"
-                className="metadata"
-                justifyContent="space-between"
-                id="video-footer"
-                font-weight="normal"
-                color="#444"
-                display="flex"
-              >
-                <span id="title">{Video?.title} </span>
-                <span id="visits">
-                  {Video?.points} {Video?.points === 1 ? "view" : "views"}
-                </span>
+          <Box id="everything-but-video" bg="white" boxShadow="0 1px 2px black">
+            <Box
+              padding="12px 12px"
+              textAlign="left"
+              className="metadata"
+              justifyContent="space-between"
+              id="video-footer"
+              font-weight="normal"
+              color="#444"
+              display="flex"
+            >
+              <Box id="title" fontWeight="bold">
+                {Video?.title}{" "}
               </Box>
+              <span id="visits">
+                {Video?.points} {Video?.points === 1 ? "view" : "views"}
+              </span>
+            </Box>
 
-              <Box
-                lineHeight="0"
-                textAlign="left"
-                padding="12px"
-                backgroundColor="#f9f9f9"
-                borderTop="1px solid #eeeeee"
-                className="actions-section"
-              >
-                <Box cursor="pointer" padding="25px" fontWeight={600}>
-                  <NextLink href="/streamario.com">Streamario</NextLink>
-                </Box>
+            <Box
+              lineHeight="0"
+              textAlign="left"
+              padding="8px"
+              backgroundColor="#f9f9f9"
+              borderTop="1px solid #eeeeee"
+              className="actions-section"
+            >
+              <Box cursor="pointer" padding="10px" fontWeight={600}>
+                <Link href="http://sepiropht.com" isExternal>
+                  Sepiropht
+                </Link>
               </Box>
             </Box>
           </Box>
         </Box>
       </Box>
     ) : (
-      <Box>
+      <Box marginTop="45px" textAlign="center" alignItems="center">
         <h1>Processing video</h1>
         <p>We'll refresh this page when it's ready.</p>
       </Box>
@@ -132,8 +136,9 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
 
   if (error) {
     return (
-      <Box>
-        <h1>Ta video n'as pas été trouvé</h1>
+      <Box marginTop="45px" textAlign="center" alignItems="center">
+        <h1>Oops!</h1>
+        <p>We couldn't find your video, not found</p>
       </Box>
     );
   }
