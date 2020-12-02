@@ -1,7 +1,6 @@
-import { Box, Flex } from "@chakra-ui/react";
-import { Icon } from "@chakra-ui/react";
+import { Box, Flex, IconButton } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
-
+import { AiOutlineClose } from "react-icons/ai";
 interface ModalPlayerProps {
   videoUrl: string;
   isVisible: boolean;
@@ -45,16 +44,17 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
       overflow="scroll"
     >
       <Box>
-        <Icon
-          cursor="pointer"
+        <IconButton
+          aria-label="close player"
           float="right"
           color="#fff"
           fontSize="24px"
+          variant="outline"
+          icon={<AiOutlineClose />}
           margin-top="4px"
           margin-right="12px"
-          name="close"
           onClick={() => close(false)}
-        ></Icon>
+        ></IconButton>
       </Box>
       <video ref={videoDomElement} controls autoPlay loop></video>
     </Flex>
