@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { Box, Button } from "@chakra-ui/core";
+import { Box, Button } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
 import { useRegisterMutation, MeQuery, MeDocument } from "../generated/graphql";
@@ -107,7 +107,7 @@ const Register: React.FC<registerProps> = ({}) => {
                   type="submit"
                   width="100%"
                   isLoading={isSubmitting}
-                  variantColor="teal"
+                  colorScheme="teal"
                 >
                   Sign up
                 </Button>

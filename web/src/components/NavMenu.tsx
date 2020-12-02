@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Textarea, Button, Spinner } from "@chakra-ui/core";
+import { Box, Flex, Image, Textarea, Button, Spinner } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import NextLink from "next/link";
 import { useApolloClient } from "@apollo/client";

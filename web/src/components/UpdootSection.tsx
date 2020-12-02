@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Flex, IconButton } from "@chakra-ui/core";
+import { Flex, IconButton } from "@chakra-ui/react";
 import {
   PostSnippetFragment,
   useVoteMutation,
@@ -73,7 +73,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
           });
           setLoadingState("not-loading");
         }}
-        variantColor={post.voteStatus === 1 ? "green" : undefined}
+        colorScheme={post.voteStatus === 1 ? "green" : undefined}
         isLoading={loadingState === "updoot-loading"}
         aria-label="updoot post"
         icon="chevron-up"
@@ -94,7 +94,7 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
           });
           setLoadingState("not-loading");
         }}
-        variantColor={post.voteStatus === -1 ? "red" : undefined}
+        colorScheme={post.voteStatus === -1 ? "red" : undefined}
         isLoading={loadingState === "downdoot-loading"}
         aria-label="downdoot post"
         icon="chevron-down"
