@@ -7,7 +7,7 @@ import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/core";
+import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/react";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
 import { useVideosQuery, useDeleteVideoMutation } from "../generated/graphql";
@@ -15,7 +15,15 @@ import { unionBy } from "lodash";
 import { useRouter } from "next/router";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
+import { createBreakpoints } from "@chakra-ui/theme-tools";
 import Modal from "react-modal";
+
+const columnsLayout = createBreakpoints({
+  sm: "1fr",
+  md: "repeat(2, 1fr)",
+  lg: "repeat(2, 1fr)",
+  xl: "repeat(3, 1fr)",
+});
 
 Modal.setAppElement("#__next");
 
@@ -34,14 +42,10 @@ interface card extends Video {
   upload?: any;
   socialUrl?: any;
 }
+
 const Home = () => {
   const router = useRouter();
-  useEffect(() => {
-    router.events.on("routeChangeComplete", () => {
-      const { url } = router.query;
-      fetchUrl(url as string);
-    });
-  }, []);
+
   const [videoFromLocalStorage, setVideosToLocalStorage] = useLocalStorage(
     "data",
     []
@@ -65,6 +69,7 @@ const Home = () => {
       };
     })
   );
+
   const [uploadVideo] = useUploadVideoMutation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -158,13 +163,50 @@ const Home = () => {
     }
   }
   useEffect(() => {
+    router.events.on("routeChangeComplete", () => {
+      const { url } = router.query;
+      url && fetchUrl(url as string);
+      //console.log(router.query);
+    });
+    return () => {
+      router.events.off("routeChangeError", () => console.log("buy edit"));
+    };
+  }, []);
+
+  useEffect(() => {
     setVideo(unionBy(videos, data?.videos.videos, "id"));
   }, [data?.videos.videos]);
 
   useEffect(() => {
-    console.log("new video to local storage", videos);
     setVideosToLocalStorage(videos);
   }, [videos]);
+
+  const { Key, start, duration } = router.query;
+  useEffect(() => {
+    if (start && duration) {
+      console.log({ start, duration });
+      const socialUrl = (ws: any) =>
+        ws?.current?.send(
+          JSON.stringify({
+            processVideo: "",
+            key: Key,
+            duration: { start, duration },
+          })
+        );
+      const newSet = videos.map((video) => {
+        if (video.key === Key) {
+          video.useWebSocket = true;
+          video.socialUrl = socialUrl;
+          return {
+            ...video,
+          };
+        }
+        return video;
+      });
+      console.log({ newSet });
+      setVideo(newSet);
+    }
+  }, [start, duration]);
 
   const ListVideos = unionBy(videos, data?.videos.videos, "id").map(
     ({ id, title, points, key, useWebSocket, upload, socialUrl }) => {
@@ -223,7 +265,7 @@ const Home = () => {
           display="flex"
           justifyContent="space-around"
           alignItems="center"
-          font-size="16px"
+          fontSize="16px"
           minW="172px"
           border="none"
           position="relative"
@@ -251,7 +293,7 @@ const Home = () => {
           padding="5px"
           bg="transparent"
           borderBottom="1px solid #ddd;"
-          width={["100%", "100%", "100%", "100%"]}
+          width={{ sm: "100%", md: "100%", lg: "100%", xl: "100%" }}
           fontSize="16px"
         >
           <input
@@ -263,15 +305,7 @@ const Home = () => {
           ></input>
         </FormControl>
       </Flex>
-      <Grid
-        gridTemplateColumns={[
-          "1fr",
-          "repeat(2, 1fr)",
-          "repeat(2, 1fr)",
-          "repeat(3, 1fr)",
-        ]}
-        gap={5}
-      >
+      <Grid gridTemplateColumns={columnsLayout} gap={5}>
         {ListVideos}
       </Grid>
     </Layout>

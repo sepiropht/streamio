@@ -7,12 +7,12 @@ import {
   Button,
   FormControl,
   Input,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 // import { isServer } from "../utils/isServer";
 import { useRouter } from "next/router";
 // import { useApolloClient } from "@apollo/client";
-
+import { createBreakpoints } from "@chakra-ui/theme-tools";
 import { withApollo } from "../utils/withApollo";
 import { GiSpeedometer } from "react-icons/gi";
 interface LandingProps {}
@@ -48,8 +48,8 @@ const Landing: React.FC<LandingProps> = ({}) => {
           justifyContent="space-between"
           border="none"
           flexWrap="wrap"
-          line-height="44px"
-          flex-direction="row"
+          lineHeight="44px"
+          flexDirection="row"
           width="100%"
         >
           <ListItem
@@ -77,10 +77,15 @@ const Landing: React.FC<LandingProps> = ({}) => {
           >
             <NextLink href="/#features">
               <Box
-                font-size="16px"
+                fontSize="16px"
                 color="#2c2c2c"
                 margin="0 10px"
-                display={["none", "block", "block", "block"]}
+                display={createBreakpoints({
+                  sm: "none",
+                  md: "block",
+                  lg: "block",
+                  xl: "block",
+                })}
                 transition="color .2s cubic-bezier(.4,0,.2,1)"
               >
                 Features
@@ -99,7 +104,15 @@ const Landing: React.FC<LandingProps> = ({}) => {
             lineHeight="44px"
           >
             <NextLink href="/login">
-              <Box display={["none", "none", "block", "block"]} margin="0 10px">
+              <Box
+                display={createBreakpoints({
+                  sm: "none",
+                  md: "none",
+                  lg: "block",
+                  xl: "block",
+                })}
+                margin="0 10px"
+              >
                 Log In
               </Box>
             </NextLink>
@@ -140,10 +153,14 @@ const Landing: React.FC<LandingProps> = ({}) => {
         </Box>
         <Flex
           bg="white"
-          padding={["30px 44px", "30px 44px", "30 25px", "30px 25px"]}
+          padding={createBreakpoints({
+            sm: "30px 44px",
+            md: "30px 44px",
+            lg: "30 25px",
+            xl: "30px 25px",
+          })}
           marginTop="70px"
           marginBottom="90px"
-          flexDirection={["column", "row", "row", "row"]}
         >
           <FormControl
             onClick={() => router.push("/home")}
@@ -152,7 +169,6 @@ const Landing: React.FC<LandingProps> = ({}) => {
           >
             <input
               className="upload-input"
-              type="file"
               name="file"
               placeholder="paste video url"
               disabled={true}
@@ -168,7 +184,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
             display="flex"
             justifyContent="space-around"
             alignItems="center"
-            font-size="16px"
+            fontSize="16px"
             minW="172px"
             margin="20px"
             border="none"
@@ -192,7 +208,6 @@ const Landing: React.FC<LandingProps> = ({}) => {
             fontWeight="extrabold"
             padding="5px"
             bg="transparent"
-            width={["100%", "100%", "100%", "100%"]}
             fontSize="16px"
           >
             <Input

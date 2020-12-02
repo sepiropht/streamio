@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/core";
+import { Box } from "@chakra-ui/react";
 // import NextLink from "next/link";
 // import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 

@@ -65,7 +65,7 @@ const main = async () => {
       const res = JSON.parse(message);
       if (res.hasOwnProperty("processVideo")) {
         console.log("PROCESSVIDEO", res);
-        processVideo(client, res.key, res.url);
+        processVideo(client, res.key, { url: res.url, duration: res.duration });
       } else {
         client.send(JSON.stringify({ id, message }));
       }
@@ -147,7 +147,7 @@ main().catch((err) => {
   console.error(err);
 });
 
-async function processVideo(client: any, key: string, url: string) {
+async function processVideo(client: any, key: string, option: any) {
   console.log("processVideo");
   const video = await getConnection()
     .getRepository(Video)
@@ -156,9 +156,9 @@ async function processVideo(client: any, key: string, url: string) {
     .getOne();
 
   console.log(video?.isAlreadyConvert, video?.isConvertionPending);
-  if (video?.isAlreadyConvert) {
-    return client.send(JSON.stringify({ isAlreadyConvert: true }));
-  }
+  // if (video?.isAlreadyConvert) {
+  //   return client.send(JSON.stringify({ isAlreadyConvert: true }));
+  // }
   if (video?.isConvertionPending) {
     return client.send(JSON.stringify({ processing: true }));
   }
@@ -182,9 +182,13 @@ async function processVideo(client: any, key: string, url: string) {
   };
   await changeStatus(true, key, false);
   client.send(JSON.stringify({ processing: true }));
-  if (url) {
+  if (option.url) {
     try {
-      const { fileName } = await getVideoFromSocialMedia(url, key, client);
+      const { fileName } = await getVideoFromSocialMedia(
+        option.url,
+        key,
+        client
+      );
 
       await getConnection()
         .createQueryBuilder()
@@ -205,7 +209,7 @@ async function processVideo(client: any, key: string, url: string) {
     }
   } else {
     try {
-      await convert(key, client);
+      await convert(key, option.duration, client);
       await changeStatus(false, key, true);
     } catch (err) {
       await Video.delete({ key });

@@ -1,5 +1,5 @@
-import { Box, Flex } from "@chakra-ui/core";
-import { Icon } from "@chakra-ui/core";
+import { Box, Flex } from "@chakra-ui/react";
+import { Icon } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 
 interface ModalPlayerProps {
@@ -49,7 +49,7 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
           cursor="pointer"
           float="right"
           color="#fff"
-          font-size="24px"
+          fontSize="24px"
           margin-top="4px"
           margin-right="12px"
           name="close"

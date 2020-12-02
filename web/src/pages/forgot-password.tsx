@@ -4,7 +4,7 @@ import { createUrqlClient } from "../utils/createUrqlClient";
 import { Wrapper } from "../components/Wrapper";
 import { Formik, Form } from "formik";
 import { InputField } from "../components/InputField";
-import { Box, Button } from "@chakra-ui/core";
+import { Box, Button } from "@chakra-ui/react";
 import { useForgotPasswordMutation } from "../generated/graphql";
 import { withApollo } from "../utils/withApollo";
 
@@ -37,7 +37,7 @@ const ForgotPassword: React.FC<{}> = ({}) => {
                 mt={4}
                 type="submit"
                 isLoading={isSubmitting}
-                variantColor="teal"
+                colorScheme="teal"
               >
                 forgot password
               </Button>

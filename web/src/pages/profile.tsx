@@ -10,7 +10,7 @@ import axios from "axios";
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { Button, Box, Flex, Grid } from "@chakra-ui/core";
+import { Button, Box, Flex, Grid } from "@chakra-ui/react";
 import { NavBar } from "../components/NavBar";
 import NextLink from "next/link";
 

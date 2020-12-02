@@ -1,40 +1,48 @@
 //import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { Layout } from "../components/Layout";
-
-import {} from "@chakra-ui/core";
 import { withApollo } from "../utils/withApollo";
-import {
-  Button,
-  Box,
-  Flex,
-  Input,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-} from "@chakra-ui/core";
+import { Button, Box, Flex, Icon, Input } from "@chakra-ui/react";
+import { AiFillSound } from "react-icons/ai";
 import { FaPause } from "react-icons/fa";
 import { useRouter } from "next/router";
+import { Slider } from "antd";
 import NextLink from "next/link";
+
 const Edit = () => {
   const [isPause, tooglePause] = useState(false);
-  const [leftValue, setLeft] = useState(0);
-  const [rightValue, setRight] = useState(0);
   const router = useRouter();
   const videoElement = useRef<HTMLVideoElement>(null);
   const [Key, setState] = useState("");
+  const [durationVideo, setDurationVideo] = useState(0);
+  const [range, setVideoRange] = useState<[number, number]>([0, 0]);
+  const [leftTime, setLeftTime] = useState<string>("00:00:00");
+  const [rightTime, setRightTime] = useState<string>("00:00:00");
+
   useEffect(() => {
     router.events.on("routeChangeComplete", () => {
       if (router.query.Key) setState(router.query.Key as string);
     });
+    return () => {
+      router.events.off("routeChangeError", () => console.log("buy edit"));
+    };
   }, []);
 
+  useEffect(() => {
+    document.querySelector("video")?.addEventListener("loadeddata", () => {
+      const duration = videoElement?.current?.duration || 1;
+      setDurationVideo(duration);
+      setRightTime(display(duration));
+    });
+    return document
+      .querySelector("video")
+      ?.removeEventListener("loadeddata", () => console.log("bye video"));
+  }, []);
   return (
     <Layout>
       <Box
         color="#748490"
-        font-size="14px"
+        fontSize="14px"
         //bg="#f1f1f1"
         flex="1 1"
         margin="0 auto"
@@ -104,9 +112,15 @@ const Edit = () => {
                       backgroundColor: "#000",
                     }}
                     preload="metadata"
-                    poster={`${Key.split(".").shift()}.jpg`}
+                    poster={`${process.env.NEXT_PUBLIC_URL}${Key.split(
+                      "."
+                    ).shift()}.jpg`}
                   >
-                    <source src={`/getVideo/?&key=${Key.slice(0, 7)}`} />
+                    <source
+                      src={`${
+                        process.env.NEXT_PUBLIC_URL
+                      }getVideo/?&key=${Key.slice(0, 7)}`}
+                    />
                   </video>
                 </Box>
               </Box>
@@ -119,73 +133,72 @@ const Edit = () => {
                 margin="10px 0"
               >
                 <Box>
-                  <Flex justifyContent="space-between">
-                    <Box
-                      userSelect="none"
-                      padding="15px 30px"
-                      width="45%"
-                      margin="auto auto 5px"
-                    >
-                      <Slider
-                        defaultValue={0}
-                        onChange={(value: number) => {
-                          console.log(value);
-                          tooglePause(false);
-                          videoElement.current
-                            ? (videoElement.current.currentTime += value)
-                            : "";
-                        }}
-                      >
-                        <SliderTrack />
-                        <SliderFilledTrack />
-                        <SliderThumb />
-                      </Slider>
-                    </Box>
-                    <Box
-                      userSelect="none"
-                      padding="15px 30px"
-                      width="45%"
-                      margin="auto auto 5px"
-                    >
-                      <Slider
-                        defaultValue={0}
-                        onChange={(value: number) => {
-                          console.log(value);
-                          tooglePause(false);
-                          videoElement.current
-                            ? (videoElement.current.currentTime += value)
-                            : "";
-                        }}
-                      >
-                        <SliderTrack />
-                        <SliderFilledTrack />
-                        <SliderThumb />
-                      </Slider>
-                    </Box>
+                  <Flex padding="0 20px">
+                    <Slider
+                      style={{ width: "100%" }}
+                      range={true}
+                      onChange={(value: [number, number]) => {
+                        const [left] = range;
+                        const [newLeft, newRight] = value;
+                        console.log({ left, newLeft, durationVideo });
+                        if (left !== newLeft && videoElement.current) {
+                          setLeftTime(display((newLeft * durationVideo) / 100));
+                          videoElement.current.currentTime =
+                            (newLeft * durationVideo) / 100;
+                        } else {
+                          setRightTime(
+                            display((newRight * durationVideo) / 100)
+                          );
+                        }
+                        setVideoRange(value);
+                      }}
+                      defaultValue={[0, 100]}
+                    ></Slider>
                   </Flex>
-                  <Box id="clip-controls-time">
-                    <Box className="clip-controls-time-control">
-                      <Input type="text" value={leftValue} />
-                      <Button>provissoir</Button>
-                    </Box>
-                    <Box>to</Box>
-                    <Box>
-                      <Input type="text" value={rightValue} />
-                      <Button>Provisoir</Button>
+                  <Flex justifyContent="space-around">
+                    <Input
+                      type="text"
+                      value={leftTime}
+                      disabled={true}
+                      width="20%"
+                    ></Input>
+                    <Input type="text" value={rightTime} width="20%"></Input>
+                  </Flex>
+                </Box>
+                <Flex
+                  id="clip-controls-footer"
+                  padding="15px"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Box cursor="pointer" id="mute">
+                    <Box
+                      onClick={() =>
+                        videoElement.current
+                          ? (videoElement.current.muted = !videoElement.current
+                              .muted)
+                          : ""
+                      }
+                    >
+                      {" "}
+                      <Icon as={AiFillSound}></Icon> Sound Off
                     </Box>
                   </Box>
-                </Box>
-                <div id="clip-controls-footer">
-                  <span>
-                    <button id="mute">
-                      <span> Sound Off</span>
-                    </button>
-                    <button id="crop">
-                      <span> Crop</span>
-                    </button>
-                  </span>
-                  <button>Save Changes</button>
-                </div>
+                  <Button
+                    colorScheme="blue"
+                    size="sm"
+                    onClick={() => {
+                      const start = (range[0] * durationVideo) / 100;
+                      const end = (range[1] * durationVideo) / 100;
+                      const duration = end - start;
+                      const params = { start, duration, Key };
+                      //console.log(params);
+                      router.push({ pathname: "/home", query: { ...params } });
+                    }}
+                  >
+                    Save Changes
+                  </Button>
+                </Flex>
               </Box>
             </Box>
           </Box>
@@ -196,3 +209,11 @@ const Edit = () => {
 };
 
 export default withApollo({ ssr: false })(Edit);
+
+function display(seconds: number): string {
+  const format = (val: number) => `0${Math.floor(val)}`.slice(-2);
+  const hours = seconds / 3600;
+  const minutes = (seconds % 3600) / 60;
+
+  return [hours, minutes, seconds % 60].map(format).join(":");
+}
