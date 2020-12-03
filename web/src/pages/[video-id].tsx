@@ -77,8 +77,10 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
             >
               <video
                 controls
+                playsInline
                 autoPlay
                 loop
+                muted
                 poster={`${process.env.NEXT_PUBLIC_URL}${Video?.key
                   .split(".")
                   .shift()}.jpg`}
