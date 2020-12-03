@@ -54,11 +54,12 @@ const main = async () => {
       credentials: true,
     })
   );
+
   const server = http.createServer(app);
   const websocketServer = new WebSocket.Server({ server });
   websocketServer.on("connection", (webSocketClient: any) => {
     const id = uuidv4();
-    webSocketClient.send('{ "connection" : "ok"}');
+    webSocketClient.send('{"connection" : "ok"}');
     const client = webSocketClient;
     webSocketClient.on("message", (message: any) => {
       console.log("message :", message);
