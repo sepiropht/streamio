@@ -2,19 +2,12 @@ version: 2
 jobs:
   build:
     branches:
-      only:
-       dev
     machine: true
     steps:
       - checkout
-      # start proprietary DB using private Docker image
-      # with credentials stored in the UI
       - run: echo 28BFivPwEihWnKg | docker login --username sepiropht --password-stdin
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then cd server && docker build -t sepiropht/lireddit:$CIRCLE_BRANCH -f Dockerfile . && docker push sepiropht/lireddit:$CIRCLE_BRANCH; fi
+      - run: if [ "${CIRCLE_BRANCH}" != "master" ]; then cd server && docker build -t sepiropht/lireddit:$CIRCLE_BRANCH -f Dockerfile.dev . && docker push sepiropht/lireddit:$CIRCLE_BRANCH; fi
 
-      # build the application image
-      - run: docker build -t sepiropht/lireddit:$CIRCLE_BRANCH -f Dockerfile.dev .
-
-      # deploy the image
-      - run: docker push sepiropht/lireddit:$CIRCLE_BRANCH .
-
-      - run: ssh -o StrictHostKeyChecking=no$root@104.248.38.40 "docker pull sepiropht/lireddit:$CIRCLE_BRANCH && docker tag sepiropht/lireddit:$CIRCLE_BRANCH dokku/streamio-dev:$CIRCLE_BRANCH && dokku deploy streamio-dev $CIRCLE_BRANCH"
+      - run: if [ "${CIRCLE_BRANCH}" != "master" ]; then ssh root@104.248.38.40 "docker pull sepiropht/lireddit:$CIRCLE_BRANCH && docker tag sepiropht/lireddit:$CIRCLE_BRANCH dokku/streamio-dev:$CIRCLE_BRANCH && dokku deploy streamio-dev $CIRCLE_BRANCH"; fi
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ssh root@104.248.38.40 "docker pull sepiropht/lireddit:$CIRCLE_BRANCH && docker tag sepiropht/lireddit:$CIRCLE_BRANCH dokku/api:$CIRCLE_BRANCH && dokku deploy api $CIRCLE_BRANCH"; fi

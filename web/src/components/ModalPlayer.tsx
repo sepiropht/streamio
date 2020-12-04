@@ -21,6 +21,10 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
       const source = document.createElement("source");
       source.setAttribute("src", videoUrl);
       source.setAttribute("type", "video/mp4");
+      source.setAttribute("loop", "");
+      source.setAttribute("autoplay", "");
+      source.setAttribute("muted", "");
+      source.setAttribute("playsinline", "");
       videoDomElement.current?.appendChild(source);
     }
     if (isVisible) {
