@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@types/ffmpeg": "^1.0.1",
-    "@types/fluent-ffmpeg": "^2.1.16",
-    "ffmpeg": "^0.0.4",
-    "fluent-ffmpeg": "^2.1.2",
-    "react-icons": "^3.11.0"
-  }
-}
