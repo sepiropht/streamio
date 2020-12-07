@@ -1,4 +1,6 @@
+import { useEffect, useRef } from "react";
 import { Box, Link } from "@chakra-ui/react";
+import { isMobile } from "react-device-detect";
 // import NextLink from "next/link";
 // import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 
@@ -24,6 +26,8 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
   });
   const [views, setViews] = useLocalStorage("views", []);
   const [updateVideoViewsMutation] = useUpdateVideoViewsMutation();
+  const videoElement = useRef<HTMLVideoElement>(null);
+
   if (data) {
     const { Video } = data;
     if (!views.includes(Video?.id) && Video) {
@@ -41,6 +45,12 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
     if (Video?.isConvertionPending) {
       setTimeout(() => document.location.reload(), 1000);
     }
+
+    useEffect(() => {
+      if (isMobile) {
+        videoElement.current?.requestFullscreen();
+      }
+    }, []);
 
     return Key && !Video?.isConvertionPending ? (
       <Box

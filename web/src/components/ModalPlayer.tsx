@@ -1,6 +1,8 @@
 import { Box, Flex, IconButton } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { AiOutlineClose } from "react-icons/ai";
+import { isMobile } from "react-device-detect";
+
 interface ModalPlayerProps {
   videoUrl: string;
   isVisible: boolean;
@@ -26,6 +28,10 @@ export const ModalPlayer: React.FC<ModalPlayerProps> = ({
       source.setAttribute("muted", "");
       source.setAttribute("playsinline", "");
       videoDomElement.current?.appendChild(source);
+
+      if (isMobile) {
+        videoDomElement.current?.requestFullscreen();
+      }
     }
     if (isVisible) {
       videoDomElement?.current?.play();
