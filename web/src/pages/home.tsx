@@ -7,7 +7,7 @@ import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { FormControl, Button, Box, Flex, Grid } from "@chakra-ui/react";
+import { FormControl, Button, Box, Flex, Grid, Input } from "@chakra-ui/react";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
 import { useVideosQuery, useDeleteVideoMutation } from "../generated/graphql";
@@ -71,6 +71,7 @@ const Home = () => {
   );
 
   const [uploadVideo] = useUploadVideoMutation();
+  const [pasteInputValue, setPasteInputValue] = useState("");
 
   const [modalIsOpen, setIsOpen] = useState(false);
   function openModal() {
@@ -83,6 +84,8 @@ const Home = () => {
 
   async function onPaste(e: any) {
     const url = e.clipboardData.getData("Text");
+    setPasteInputValue("");
+
     fetchUrl(url);
   }
   async function fetchUrl(url: string) {
@@ -246,7 +249,7 @@ const Home = () => {
         <h1>To large or too long</h1>
         <p> This video is either too large (500MB) or too long (10min)</p>
       </Modal>
-      <Flex bg="white" padding="10px" marginBottom="20px">
+      <Flex bg="white" padding="10px" marginBottom="20px" alignItems="center">
         <FormControl display="none" bg="white">
           <input
             className="upload-input"
@@ -290,19 +293,19 @@ const Home = () => {
           marginLeft="20px"
           fontWeight="extrabold"
           textAlign="left"
-          padding="5px"
           bg="transparent"
+          width="100%"
           borderBottom="1px solid #ddd;"
-          width={{ sm: "100%", md: "100%", lg: "100%", xl: "100%" }}
           fontSize="16px"
         >
-          <input
+          <Input
             ref={urlUpload}
             type="text"
+            value={pasteInputValue}
             onPaste={onPaste}
-            style={{ width: "100%" }}
+            border="none"
             placeholder="Paste a video Url"
-          ></input>
+          ></Input>
         </FormControl>
       </Flex>
       <Grid gridTemplateColumns={columnsLayout} gap={5}>
