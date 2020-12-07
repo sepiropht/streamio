@@ -15,15 +15,7 @@ import { unionBy } from "lodash";
 import { useRouter } from "next/router";
 import validUrl from "valid-url";
 import validateFile from "../utils/validateFile";
-import { createBreakpoints } from "@chakra-ui/theme-tools";
 import Modal from "react-modal";
-
-const columnsLayout = createBreakpoints({
-  sm: "1fr",
-  md: "repeat(2, 1fr)",
-  lg: "repeat(2, 1fr)",
-  xl: "repeat(3, 1fr)",
-});
 
 Modal.setAppElement("#__next");
 
@@ -308,7 +300,15 @@ const Home = () => {
           ></Input>
         </FormControl>
       </Flex>
-      <Grid gridTemplateColumns={columnsLayout} gap={5}>
+      <Grid
+        templateColumns={[
+          "1fr",
+          "repeat(2, 1fr)",
+          "repeat(2, 1fr)",
+          "repeat(3, 1fr)",
+        ]}
+        gap={5}
+      >
         {ListVideos}
       </Grid>
     </Layout>
