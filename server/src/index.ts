@@ -35,7 +35,7 @@ const main = async () => {
     type: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,
-    synchronize: true,
+    synchronize: process.env.NODE_ENV !== "production",
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Updoot, Video],
   });
@@ -94,7 +94,13 @@ const main = async () => {
           Key: video.key,
         };
 
-        s3.getObject(uploadParams).createReadStream().pipe(res);
+        const s3Stream = s3.getObject(uploadParams).createReadStream();
+
+        s3Stream.on("error", (err: any) => {
+          console.log(err);
+        });
+
+        s3Stream.pipe(res);
       }
     }
   });
@@ -115,7 +121,7 @@ const main = async () => {
         domain: __prod__ ? ".sepiropht.com" : undefined,
       },
       saveUninitialized: false,
-      secret: process.env.SESSION_SECRET,
+      secret: process.env.SESSION_SECRET as string,
       resave: false,
     })
   );
@@ -139,7 +145,7 @@ const main = async () => {
     cors: false,
   });
 
-  server.listen(parseInt(process.env.PORT), () => {
+  server.listen(parseInt(process.env.PORT as string), () => {
     console.log("server started on localhost:4000");
   });
 };
