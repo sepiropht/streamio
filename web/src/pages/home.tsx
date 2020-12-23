@@ -7,7 +7,14 @@ import { withApollo } from "../utils/withApollo";
 import s3 from "../utils/aws";
 import { v4 as uuidv4 } from "uuid";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { FormControl, Button, Box, Flex, Grid, Input } from "@chakra-ui/react";
+import {
+  FormControl,
+  Button,
+  Box,
+  Flex,
+  SimpleGrid,
+  Input,
+} from "@chakra-ui/react";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
 import { useVideosQuery, useDeleteVideoMutation } from "../generated/graphql";
@@ -300,17 +307,9 @@ const Home = () => {
           ></Input>
         </FormControl>
       </Flex>
-      <Grid
-        templateColumns={[
-          "1fr",
-          "repeat(2, 1fr)",
-          "repeat(2, 1fr)",
-          "repeat(3, 1fr)",
-        ]}
-        gap={5}
-      >
+      <SimpleGrid minChildWidth="300px" spacing="40px">
         {ListVideos}
-      </Grid>
+      </SimpleGrid>
     </Layout>
   );
 };
