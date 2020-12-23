@@ -62,9 +62,9 @@ const Landing: React.FC<LandingProps> = ({}) => {
               color="#2c2c2c"
               margin="0 10px"
               transition="color .2s cubic-bezier(.4,0,.2,1)"
-              href="https://streamario.com"
+              href="https://streamio.io"
             >
-              Streamario
+              Streamio
             </Link>
           </ListItem>
           <ListItem
@@ -148,8 +148,8 @@ const Landing: React.FC<LandingProps> = ({}) => {
           </h1>
         </Box>
         <Box maxWidth="500px" color="#555" fontSize="18px" textAlign="center">
-          Streamario is one of the easiest way to upload, edit, and share video
-          — it's free to use and there's no signup required.
+          Streamio is one of the easiest way to upload, edit, and share video —
+          it's free to use and there's no signup required.
         </Box>
         <Flex
           bg="white"
