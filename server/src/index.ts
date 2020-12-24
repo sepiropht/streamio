@@ -118,7 +118,7 @@ const main = async () => {
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
-        domain: __prod__ ? ".sepiropht.com" : undefined,
+        domain: __prod__ ? ".streamio.io" : undefined,
       },
       saveUninitialized: false,
       secret: process.env.SESSION_SECRET as string,
