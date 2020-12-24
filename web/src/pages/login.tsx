@@ -35,7 +35,7 @@ const Login: React.FC<{}> = ({}) => {
         <Box>
           <NextLink href="/">
             <Box fontSize="20px" fontWeight={900} color="#2c2c2c">
-              Streamario
+              Streamio
             </Box>
           </NextLink>
         </Box>

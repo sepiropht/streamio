@@ -130,8 +130,8 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               className="actions-section"
             >
               <Box cursor="pointer" padding="10px" fontWeight={600}>
-                <Link href="http://sepiropht.com" isExternal>
-                  Sepiropht
+                <Link href="http://streamio.io" isExternal>
+                  Streamio
                 </Link>
               </Box>
             </Box>
