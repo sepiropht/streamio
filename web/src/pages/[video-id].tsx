@@ -28,6 +28,12 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
   const [updateVideoViewsMutation] = useUpdateVideoViewsMutation();
   const videoElement = useRef<HTMLVideoElement>(null);
 
+  useEffect(() => {
+    if (isMobile) {
+      videoElement.current?.requestFullscreen();
+    }
+  }, []);
+
   if (data) {
     const { Video } = data;
     if (!views.includes(Video?.id) && Video) {
@@ -45,12 +51,6 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
     if (Video?.isConvertionPending) {
       setTimeout(() => document.location.reload(), 1000);
     }
-
-    useEffect(() => {
-      if (isMobile) {
-        videoElement.current?.requestFullscreen();
-      }
-    }, []);
 
     return Key && !Video?.isConvertionPending ? (
       <Box
