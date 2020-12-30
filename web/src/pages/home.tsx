@@ -307,7 +307,7 @@ const Home = () => {
           ></Input>
         </FormControl>
       </Flex>
-      <SimpleGrid minChildWidth="300px" spacing="40px">
+      <SimpleGrid minChildWidth="310px" spacing="15px">
         {ListVideos}
       </SimpleGrid>
     </Layout>

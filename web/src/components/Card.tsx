@@ -127,6 +127,7 @@ export const Card: React.FC<CardProps> = ({
         position="absolute"
         right="-16px;"
         padding="3px"
+        maxWidth="33%"
         top="268px"
         display={show ? "flex" : "none"}
       >
