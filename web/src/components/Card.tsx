@@ -127,7 +127,6 @@ export const Card: React.FC<CardProps> = ({
         position="absolute"
         right="-16px;"
         padding="3px"
-        maxWidth="33%"
         top="268px"
         display={show ? "flex" : "none"}
       >
@@ -228,7 +227,7 @@ export const Card: React.FC<CardProps> = ({
             paddingLeft="0"
             value={title}
             onChange={(e: any) => console.log(e.target.text)}
-            fontWeight={600}
+            fontWeight="bold"
             lineHeight={1.5}
             display="flex"
             alignItems="center"
@@ -279,7 +278,7 @@ export const Card: React.FC<CardProps> = ({
         >
           <Button
             padding="0 15"
-            fontWeight={600}
+            fontWeight="bold"
             borderRadius="3px"
             height="26px"
             lineHeight="24px;"
@@ -296,7 +295,7 @@ export const Card: React.FC<CardProps> = ({
           </Button>
           <Button
             padding="0 15"
-            fontWeight={600}
+            fontWeight="bold"
             borderRadius="3px"
             display={!currentProgress ? "flex" : "none"}
             height="26px"
