@@ -23,10 +23,10 @@ const Profile = () => {
     <>
       <NavBar></NavBar>
       <Box padding="30px">
-        <Box bg="white" fontWeight={400} fontSize="35px" width="100%">
+        <Box bg="white" fontWeight="normal" fontSize="35px" width="100%">
           <h1>Profile</h1>
         </Box>
-        <Box fontWeight={500} color={"rgb(116, 132, 144)"}>
+        <Box fontWeight="normal" color={"rgb(116, 132, 144)"}>
           Contact info, view preferences, and account overview.
         </Box>
         <Flex

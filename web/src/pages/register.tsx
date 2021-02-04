@@ -40,7 +40,7 @@ const Register: React.FC<registerProps> = ({}) => {
       >
         <Box>
           <NextLink href="/">
-            <Box fontSize="20px" fontWeight={900} color="#2c2c2c">
+            <Box fontSize="20px" fontWeight="extrabold" color="#2c2c2c">
               Streamio
             </Box>
           </NextLink>
@@ -116,7 +116,7 @@ const Register: React.FC<registerProps> = ({}) => {
           </Formik>
           <Box display="flex" flexDirection="row" marginTop="30px">
             Already have an account?{" "}
-            <Box fontWeight={600} marginLeft="10px" color="#0f90fa">
+            <Box fontWeight="normal" marginLeft="10px" color="#0f90fa">
               <NextLink href="/login"> Log In</NextLink>
             </Box>
           </Box>

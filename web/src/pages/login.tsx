@@ -34,7 +34,7 @@ const Login: React.FC<{}> = ({}) => {
       >
         <Box>
           <NextLink href="/">
-            <Box fontSize="20px" fontWeight={900} color="#2c2c2c">
+            <Box fontSize="20px" fontWeight="extrabold" color="#2c2c2c">
               Streamio
             </Box>
           </NextLink>
@@ -116,7 +116,7 @@ const Login: React.FC<{}> = ({}) => {
           </Flex>
           <Box display="flex" flexDirection="row" marginTop="30px">
             Don't have an account?{" "}
-            <Box fontWeight={600} marginLeft="10px" color="#0f90fa">
+            <Box fontWeight="normal" marginLeft="10px" color="#0f90fa">
               <NextLink href="/register"> Sign up for free</NextLink>
             </Box>
           </Box>

@@ -37,7 +37,7 @@ export const NavMenu: React.FC<NavMenuProps> = ({ name }) => {
             fontSize="11px"
             display={isShow ? "block" : "none"}
             padding="8px 10px 3px"
-            fontWeight={600}
+            fontWeight="normal"
             borderTop="1px solid #eee"
             color="#748490"
             textAlign="left"
@@ -100,7 +100,7 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({
       position="relative"
       cursor="pointer"
       color="#333"
-      fontWeight={600}
+      fontWeight="normal"
       bg="transparent"
       border="1px solid transparent"
       margin="0 6px"

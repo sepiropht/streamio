@@ -129,7 +129,7 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               borderTop="1px solid #eeeeee"
               className="actions-section"
             >
-              <Box cursor="pointer" padding="10px" fontWeight={600}>
+              <Box cursor="pointer" padding="10px" fontWeight="normal">
                 <Link href="http://streamio.io" isExternal>
                   Streamio
                 </Link>

@@ -32,7 +32,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
     <Box
       background="linear-gradient(180deg,#fff,#fff 0,#f1f1f1 60%) !important"
       fontSize="14px"
-      fontWeight={400}
+      fontWeight="normal"
       lineHeight={1.5}
     >
       <Box
@@ -58,7 +58,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           >
             <Link
               fontSize="25px"
-              fontWeight={900}
+              fontWeight="extrabold"
               color="#2c2c2c"
               margin="0 10px"
               transition="color .2s cubic-bezier(.4,0,.2,1)"
@@ -70,7 +70,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           <ListItem
             flex-direction="row"
             display="flex"
-            fontWeight={400}
+            fontWeight="normal"
             lineHeight="44px"
             cursor="pointer"
             flex="1 1 0%"
@@ -138,7 +138,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           marginBottom="50px"
           lineHeight="1.1"
           fontSize="3rem"
-          fontWeight={700}
+          fontWeight="extrabold"
           fontFamily="'Roboto',Helvetica,sans-serif"
           paddingTop="50px"
         >
@@ -177,7 +177,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           </FormControl>
           <Button
             height="50px"
-            fontWeight={600}
+            fontWeight="bold"
             bg="#0f90fa"
             color="white"
             line-height="24px"
@@ -240,7 +240,7 @@ const Landing: React.FC<LandingProps> = ({}) => {
           marginTop="50px"
           textAlign="center"
           justifyContent="center"
-          fontWeight={600}
+          fontWeight="bold"
           borderBottom="1px solid #e7e7e7"
         >
           All of the features you need. None of the complexity you don't.
@@ -276,7 +276,7 @@ const Feature: React.FC<FeatureProps> = ({ children, title, description }) => (
     </Box>
     <Box>
       <Box
-        fontWeight={500}
+        fontWeight="normal"
         line-height={1.2}
         color="#2c2c2c"
         marginBottom="12px"

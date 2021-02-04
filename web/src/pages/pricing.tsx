@@ -17,7 +17,7 @@ const Pricing: React.FC = () => (
   <Box
     background="linear-gradient(180deg,#fff,#fff 0,#f1f1f1 60%) !important"
     fontSize="14px"
-    fontWeight={400}
+    fontWeight="normal"
     lineHeight={1.5}
   >
     <Box
@@ -43,7 +43,7 @@ const Pricing: React.FC = () => (
         >
           <Link
             fontSize="25px"
-            fontWeight={900}
+            fontWeight="extrabold"
             color="#2c2c2c"
             margin="0 10px"
             transition="color .2s cubic-bezier(.4,0,.2,1)"
@@ -76,7 +76,7 @@ const Pricing: React.FC = () => (
         marginTop="50px"
         textAlign="center"
         justifyContent="center"
-        fontWeight={600}
+        fontWeight="normal"
         borderBottom="1px solid #e7e7e7"
       >
         Choose your plan.
