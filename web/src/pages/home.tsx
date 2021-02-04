@@ -12,8 +12,8 @@ import {
   Button,
   Box,
   Flex,
-  SimpleGrid,
   Input,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import useLocalStorage from "../utils/useLocalStorage";
 import { Card } from "../components/Card";
@@ -260,7 +260,7 @@ const Home = () => {
         </FormControl>
         <Button
           height="36px"
-          fontWeight={600}
+          fontWeight="bold"
           bg="#0f90fa"
           color="white"
           line-height="24px"
@@ -307,7 +307,7 @@ const Home = () => {
           ></Input>
         </FormControl>
       </Flex>
-      <SimpleGrid minChildWidth="310px" spacing="15px">
+      <SimpleGrid minChildWidth="300px" gridGap="4">
         {ListVideos}
       </SimpleGrid>
     </Layout>
