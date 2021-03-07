@@ -46,6 +46,7 @@ export default async (
               .audioCodec("aac")
               .videoCodec("libx264")
               .format("mp4")
+              .addOption('-movflags', 'faststart')
               .save(filePath)
               .on("error", (err) => {
                 console.log(err);
