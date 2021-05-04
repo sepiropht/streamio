@@ -1,7 +1,7 @@
 import youtubedl from "youtube-dl";
 const ffmpeg = require("fluent-ffmpeg");
 import fs from "fs";
-import s3 from "./aws";
+import s3 from "./awsConf"
 import generateThumbnail from "./generateThumbnail";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";

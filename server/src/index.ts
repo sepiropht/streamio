@@ -24,7 +24,7 @@ import { createUserLoader } from "./utils/createUserLoader";
 import { createUpdootLoader } from "./utils/createUpdootLoader";
 import { VideoResolver } from "./resolvers/video";
 import convert from "./utils/convert";
-import s3 from "./utils/aws";
+import s3 from "./utils/awsConf";
 import { v4 as uuidv4 } from "uuid";
 import getVideoFromSocialMedia from "./utils/getVideoFromSocialMedia";
 //import streamify from "./utils/streamify";

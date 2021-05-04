@@ -1,4 +1,4 @@
-import s3 from "./aws";
+import s3 from "./awsConf";
 import path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import generateThumbnail from "./generateThumbnail";

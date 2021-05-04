@@ -4,7 +4,7 @@ import { Layout } from "../components/Layout";
 import { useUploadVideoMutation } from "../generated/graphql";
 import { Video } from "../interfaces";
 import { withApollo } from "../utils/withApollo";
-import s3 from "../utils/aws";
+import s3 from "../utils/awsConf";
 import { v4 as uuidv4 } from "uuid";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import {
