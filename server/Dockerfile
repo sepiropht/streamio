@@ -21,7 +21,7 @@ RUN yarn
 
 COPY . .
 COPY .env.prod .env
-ENV SESSION_SECRET=$SESSION_SECRET
+ENV SESSION_SECRET=qwoiuweqoiuwqeoiusdalkjwqo
 ENV accessKeyId=$accessKeyId
 ENV secretAccessKey=$secretAccessKey
 
