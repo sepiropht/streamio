@@ -21,6 +21,8 @@ RUN yarn
 
 COPY . .
 COPY .env.production .env
+ENV accessKeyId=$accessKeyId
+ENV secretAccessKey=$secretAccessKey
 
 RUN yarn build
 
