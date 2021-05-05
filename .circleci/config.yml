@@ -5,7 +5,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: echo 28BFivPwEihWnKg | docker login --username sepiropht --password-stdin
+      - run: echo $DOCKER_PASS | docker login --username sepiropht --password-stdin
       - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then cd server && docker build -t sepiropht/lireddit:$CIRCLE_BRANCH -f Dockerfile . && docker push sepiropht/lireddit:$CIRCLE_BRANCH; fi
       - run: if [ "${CIRCLE_BRANCH}" != "master" ]; then cd server && docker build -t sepiropht/lireddit:$CIRCLE_BRANCH -f Dockerfile.dev . && docker push sepiropht/lireddit:$CIRCLE_BRANCH; fi
 
