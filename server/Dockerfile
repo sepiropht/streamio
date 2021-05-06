@@ -3,7 +3,7 @@ FROM wernight/youtube-dl
 FROM node:14
 
 ARG SESSION_SECRET
-ARG accessKey
+ARG accessKeyId
 ARG secretAccessKey
 
 COPY --from=0 / /
@@ -25,9 +25,9 @@ RUN yarn
 
 COPY . .
 COPY .env.prod .env
-ENV SESSION_SECRET=SESSION_SECRET
-ENV accessKeyId=accessKeyId
-ENV secretAccessKey=secretAccessKey
+ENV SESSION_SECRET=$SESSION_SECRET
+ENV accessKeyId=$accessKeyId
+ENV secretAccessKey=$secretAccessKey
 
 RUN yarn build
 

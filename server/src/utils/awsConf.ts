@@ -1,13 +1,10 @@
 import AWS from "aws-sdk";
 
-const { accessKeyId, secretAccessKey } = process.env
 
-// Set the region
 AWS.config.update({
-  accessKeyId,
-  secretAccessKey,
+  accessKeyId: process.env.accessKeyId,
+  secretAccessKey: process.env.secretAccessKey,
 });
-
 
 AWS.config.update({ region: "eu-west-3" });
 
