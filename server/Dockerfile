@@ -2,6 +2,10 @@ FROM jrottenberg/ffmpeg:3.3-alpine
 FROM wernight/youtube-dl
 FROM node:14
 
+ARG SESSION_SECRET
+ARG accessKey
+ARG secretAccessKey
+
 COPY --from=0 / /
 COPY --from=1 / /
 
