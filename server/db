@@ -1,0 +1,5 @@
+SET DATABASE
+
+$docker-compose up
+$docker exec -ti CONTAINER_ID psql -U postgre
+psql# CREATE DATABASE streamio;
