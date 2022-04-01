@@ -9,6 +9,10 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     restart: unless-stopped
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
 
 volumes:
   db_data:
