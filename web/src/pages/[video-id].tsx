@@ -1,20 +1,20 @@
-import { useEffect, useRef } from "react";
-import { Box, Link } from "@chakra-ui/react";
-import { isMobile } from "react-device-detect";
+import { useEffect, useRef } from 'react'
+import { Box, Link } from '@chakra-ui/react'
+import { isMobile } from 'react-device-detect'
 // import NextLink from "next/link";
 // import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 
-import NextLink from "next/link";
+import NextLink from 'next/link'
 import {
   useVideoQuery,
   useUpdateVideoViewsMutation,
-} from "../generated/graphql";
-import { withApollo } from "../utils/withApollo";
-import useLocalStorage from "../utils/useLocalStorage";
+} from '../generated/graphql'
+import { withApollo } from '../utils/withApollo'
+import useLocalStorage from '../utils/useLocalStorage'
 
 interface VideoProps {
-  Key: string;
-  id: string;
+  Key: string
+  id: string
 }
 
 const Video: React.FC<VideoProps> = ({ Key, id }) => {
@@ -23,33 +23,33 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
     variables: {
       id: parseInt(id, 10),
     },
-  });
-  const [views, setViews] = useLocalStorage("views", []);
-  const [updateVideoViewsMutation] = useUpdateVideoViewsMutation();
-  const videoElement = useRef<HTMLVideoElement>(null);
+  })
+  const [views, setViews] = useLocalStorage('views', [])
+  const [updateVideoViewsMutation] = useUpdateVideoViewsMutation()
+  const videoElement = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     if (isMobile) {
-      videoElement.current?.requestFullscreen();
+      videoElement.current?.requestFullscreen()
     }
-  }, []);
+  }, [])
 
   if (data) {
-    const { Video } = data;
+    const { Video } = data
     if (!views.includes(Video?.id) && Video) {
-      const id = parseInt(Video.id.toString(), 10);
-      (async () => {
-        setViews([...views, Video.id]);
+      const id = parseInt(Video.id.toString(), 10)
+      ;(async () => {
+        setViews([...views, Video.id])
         const { errors } = await updateVideoViewsMutation({
           variables: { id },
-        });
+        })
         if (!errors) {
-          setViews([...views, Video?.id]);
+          setViews([...views, Video?.id])
         }
-      })();
+      })()
     }
     if (Video?.isConvertionPending) {
-      setTimeout(() => document.location.reload(), 1000);
+      setTimeout(() => document.location.reload(), 1000)
     }
 
     return Key && !Video?.isConvertionPending ? (
@@ -85,21 +85,12 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               bottom="0px;"
               height="50px"
             >
-              <video
-                controls
-                playsInline
-                autoPlay
-                loop
-                muted
-                poster={`${process.env.NEXT_PUBLIC_URL}${Video?.key
-                  .split(".")
-                  .shift()}.jpg`}
-              >
+              <audio controls playsInline autoPlay loop muted>
                 <source
                   src={`${process.env.NEXT_PUBLIC_URL}getVideo/?&key=${Key}`}
-                  type="video/mp4"
+                  type="audio/mpeg"
                 ></source>
-              </video>
+              </audio>
             </Box>
           </Box>
           <Box id="everything-but-video" bg="white" boxShadow="0 1px 2px black">
@@ -114,10 +105,10 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
               display="flex"
             >
               <Box id="title" fontWeight="bold">
-                {Video?.title}{" "}
+                {Video?.title}{' '}
               </Box>
               <span id="visits">
-                {Video?.points} {Video?.points === 1 ? "view" : "views"}
+                {Video?.points} {Video?.points === 1 ? 'view' : 'views'}
               </span>
             </Box>
 
@@ -143,7 +134,7 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
         <h1>Processing video</h1>
         <p>We'll refresh this page when it's ready.</p>
       </Box>
-    );
+    )
   }
 
   if (error) {
@@ -152,18 +143,18 @@ const Video: React.FC<VideoProps> = ({ Key, id }) => {
         <h1>Oops!</h1>
         <p>We couldn't find your video, not found</p>
       </Box>
-    );
+    )
   }
-  return null;
-};
+  return null
+}
 
 export async function getServerSideProps({
   query,
 }: {
-  query: { "video-id": string };
+  query: { 'video-id': string }
 }) {
-  const [Key, id] = [query["video-id"].slice(0, 7), query["video-id"].slice(7)];
-  return { props: { Key, id } };
+  const [Key, id] = [query['video-id'].slice(0, 7), query['video-id'].slice(7)]
+  return { props: { Key, id } }
 }
 
-export default withApollo({ ssr: false })(Video);
+export default withApollo({ ssr: false })(Video)
